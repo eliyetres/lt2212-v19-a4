@@ -6,4 +6,6 @@
 
 ### Elin Hagman
 
+Part 1: preprocessing
+
 ### Sandra Dee
