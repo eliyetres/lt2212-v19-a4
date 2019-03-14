@@ -7,5 +7,5 @@ def readfile(filename):
             print(line)
             
 
-#readfile("UN-french.txt")
-readfile("UN-english.txt")
+readfile("UN-french.txt")
+#readfile("UN-english.txt")
