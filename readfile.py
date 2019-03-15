@@ -29,4 +29,4 @@ def readfile(eng_file, fre_file):
     return english_words, french_words
 
 
-readfile("UN-english.txt", "UN-french.txt")
+# readfile("../UN-english.txt", "../UN-french.txt")
