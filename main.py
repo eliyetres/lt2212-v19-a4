@@ -2,13 +2,13 @@ from readfile import readfile
 from split_data import split_data 
 from vectorization import get_vocabulary, generate_one_hot_encoded_vectors
 
+import config
+
 
 if __name__ == '__main__':
     # getting data from readfile.py
-    english_filename = "../UN-english-sample.txt"
-    french_filename = "../UN-french-sample.txt"
     print("Reading data from source and target files...")
-    english_data, french_data = readfile(english_filename, french_filename)
+    english_data, french_data = readfile(config.english_filename, config.french_filename)
     test_size = 0.2
 
     # split the data into training and testing sets
