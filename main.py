@@ -1,6 +1,7 @@
 from readfile import readfile
 from split_data import split_data 
 from vectorization import *
+from trigrams import create_ngram
 
 import config
 
@@ -12,19 +13,23 @@ if __name__ == '__main__':
     
     # getting data from readfile.py
     print("Reading data from source and target files...")
-    english_data, french_data = readfile(config.english_filename, config.french_filename)
+    english, french = readfile(config.english_filename, config.french_filename)
     test_size = 0.2
 
+    # check data against the model and remove words not found
+    print("Removing words not found in the model")
+    english_data, french_data = remove_words(english, french, w2v_model)
+    
     # split the data into training and testing sets
     print("Splitting data into training and testing sets...")
     eng_train, eng_test, french_train, french_test = split_data(english_data, french_data, test_size)
 
     # get vocabulary from training and testing data
-    print("Generating vocabulary for source text...")
+    print("Generating vocabulary for target text...")
     eng_vocabulary = get_vocabulary(english_data)
     print(eng_vocabulary)
     
-    print("Generating vocabulary for target text...")
+    print("Generating vocabulary for source text...")
     french_vocabulary = get_vocabulary(french_data)
 
     # get one hot encoded vectors for training and testing data
@@ -38,3 +43,11 @@ if __name__ == '__main__':
     w2v_vectors = get_w2v_vectors(w2v_model, eng_vocabulary)
     print("One hot encoded vector for 'the': {}".format(one_hot_encoded_vectors_eng['the']))
     print("Word2vec vector for 'the': {}".format(w2v_vectors['the']))
+    
+    # create trigram
+    english_trigrams = create_ngram(english_data)
+    
+    # get trigram vectors for all sentences
+    # should the last word be just the word, as in assignment 3?
+    # If so, re-use code to produce these features
+    trigram_vectors = make_vector_trigrams(english_trigrams, w2v_vectors)

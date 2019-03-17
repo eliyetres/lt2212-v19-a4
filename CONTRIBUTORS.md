@@ -10,6 +10,6 @@
 * Open and reading text files, preprocessing text and tokenization.
 * Building trigrams from vobabulary sentences.
 
-### Sandra Dee
+### Sandra Derbring
 
 * Splitting vocabulary into training an test data sets by percentage.
