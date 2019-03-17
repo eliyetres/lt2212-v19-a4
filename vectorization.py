@@ -3,6 +3,7 @@ from sklearn.feature_extraction import DictVectorizer
 
 import warnings # Stackoverflow said to do this if you use Windows
 from gensim.models.keyedvectors import KeyedVectors
+from trigrams import create_ngram
 
 warnings.filterwarnings(action='ignore', category=UserWarning, module='gensim')
 
@@ -11,9 +12,41 @@ def get_vocabulary(ls_text):
     vocabulary = []
     for ls_words in ls_text:
         vocabulary.extend(ls_words)
-    vocabulary = list(set(vocabulary))
+    vocabulary = list(set(vocabulary+["<start>"]))
+    
     return vocabulary
 
+
+def remove_words(english, french, w2v_model):
+
+    print("Number of English sentences: {}".format(len(english)))
+    
+    e_data = []
+    f_data = []
+    not_found = []
+    
+    for i in range(len(english)):
+        english_sentence = english[i]
+        french_sentence = french[i]
+
+        #Loop backwards so that no items are skipped
+        for idx in reversed(range(len(english_sentence))):
+            word = english_sentence[idx]
+
+            try:
+                vec = w2v_model.word_vec(word)
+            except KeyError:
+                english_sentence.pop(idx)
+                french_sentence.pop(idx)
+                if word not in not_found:
+                    not_found.append(word)
+                continue
+                    
+        e_data.append(english_sentence)
+        f_data.append(french_sentence)
+
+    print("Words not found in model: {}".format(not_found))
+    return e_data, f_data
 
 def generate_one_hot_encoded_vectors(ls_words):
     # encoder = OneHotEncoder(ls_words)
@@ -42,3 +75,34 @@ def get_w2v_vectors(w2v_model, ls_words):
         except KeyError:
             continue
     return w2v_vectors
+
+
+def make_vector_trigrams(sentences, w2v_vectors):
+
+    trigram_vectors = []
+    missing_words = []
+    
+    ng = create_ngram(sentences)
+
+    for sentence in ng:
+        for trigrams in sentence:
+            for trigram in trigrams:
+                tg_vector = []
+                if trigram == '<start>':
+                    #vector = w2v_vectors[trigram]
+                    pass
+                else:
+                    for word in trigram:
+                        #print(word)
+                        if word not in w2v_vectors:
+                            if word not in missing_words:
+                                missing_words.append(word)
+                        else:
+                            vector = w2v_vectors[word]
+                            tg_vector.append(vector)
+
+                trigram_vectors.append(tg_vector)
+
+    print("The following words were not found in the w2v: ")
+    print(missing_words)
+    return trigram_vectors
