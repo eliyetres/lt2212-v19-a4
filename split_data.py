@@ -7,13 +7,13 @@ from sklearn.model_selection import train_test_split
 
 
 def split_data(target, source, size):
-
+    
     #Printing the lengths of target and source data
-    print("Total length of target language: ".format(len(target)))
-    print("Total length of source language: ".format(len(source)))
+    print("Total length of target language: {}".format(len(target)))
+    print("Total length of source language: {}".format(len(source)))
     
     #Splitting data into sets
-    print("Splitting data into training and tests sets...")
+    #print("Splitting data into training and tests sets...")
     targetTrain, targetTest, sourceTrain, sourceTest = train_test_split(target, source, test_size=size)
 
     #Printing the lengths of the sets
