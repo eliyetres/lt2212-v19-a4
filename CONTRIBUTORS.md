@@ -12,4 +12,6 @@
 
 ### Sandra Derbring
 
-* Splitting vocabulary into training an test data sets by percentage.
+* Splitting vocabulary into training and test data sets by percentage.
+* Removing words from data that are not found in the model
+* Building trigrams of word2vectors
