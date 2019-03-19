@@ -83,28 +83,26 @@ def get_w2v_vectors(w2v_model, ls_words):
 def make_vector_trigrams(sentences, w2v_vectors):
     trigram_vectors = []
     missing_words = []
+
+    trigram1 = sentences[0][0]
     
-    ng = create_ngram(sentences)
-
-    for sentence in ng:
-        for trigrams in sentence:
-            for trigram in trigrams:
+    for sentence in sentences:
+        for trigram in sentence:
+            for word in trigram:
                 tg_vector = []
-                if trigram == '<start>':
-                    #vector = w2v_vectors[trigram]
-                    pass
+
+                #Do we need this check now that we've taken care of this?
+                if word not in w2v_vectors:
+                    if word not in missing_words:
+                        missing_words.append(word)
                 else:
-                    for word in trigram:
-                        #print(word)
-                        if word not in w2v_vectors:
-                            if word not in missing_words:
-                                missing_words.append(word)
-                        else:
-                            vector = w2v_vectors[word]
-                            tg_vector.append(vector)
+                    vector = w2v_vectors[word]
+                    tg_vector.append(vector)
 
-                trigram_vectors.append(tg_vector)
+            trigram_vectors.append(tg_vector)
 
-    print("The following words were not found in the w2v: ")
-    print(missing_words)
+    #print("The following words were not found in the w2v: ")
+    #print(missing_words)
+    print("{} trigram vectors were created".format(len(trigram_vectors)))
+    print("Vector for {}: {}".format(trigram1, trigram_vectors[0]))
     return trigram_vectors
