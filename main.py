@@ -48,6 +48,4 @@ if __name__ == '__main__':
     english_trigrams = create_ngram(english_data)
     
     # get trigram vectors for all sentences
-    # should the last word be just the word, as in assignment 3?
-    # If so, re-use code to produce these features
     trigram_vectors = make_vector_trigrams(english_trigrams, w2v_vectors)
