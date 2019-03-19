@@ -4,6 +4,7 @@ from sklearn.feature_extraction import DictVectorizer
 import warnings # Stackoverflow said to do this if you use Windows
 from gensim.models.keyedvectors import KeyedVectors
 from trigrams import create_ngram
+import numpy as np
 
 warnings.filterwarnings(action='ignore', category=UserWarning, module='gensim')
 
@@ -73,12 +74,13 @@ def get_w2v_vectors(w2v_model, ls_words):
             w2v_vectors[word] = vec
         # this exception will occur when a word does not exist in the vocabulary of this model
         except KeyError:
-            continue
+            if word == '<start>':
+                vec = np.random.rand(1,300)[0]
+                w2v_vectors[word] = vec
     return w2v_vectors
 
 
 def make_vector_trigrams(sentences, w2v_vectors):
-
     trigram_vectors = []
     missing_words = []
     
