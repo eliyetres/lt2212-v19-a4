@@ -15,3 +15,15 @@ def create_ngram(vocabulary):
             trigram_sentence.append(each_gram)
         all_trigrams.append(trigram_sentence)
     return all_trigrams
+
+
+def split_data_features_labels(trigram_sents):
+    X = []
+    Y = []
+    
+    for sent in trigram_sents:
+        for trigram in sent:
+            X.append(trigram[:2])
+            Y.append(trigram[-1])
+
+    return X, Y

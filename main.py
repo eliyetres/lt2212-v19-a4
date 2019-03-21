@@ -1,7 +1,7 @@
 from readfile import readfile
 from split_data import split_data 
 from vectorization import *
-from trigrams import create_ngram
+from trigrams import create_ngram, split_data_features_labels
 
 import config
 
@@ -45,7 +45,12 @@ if __name__ == '__main__':
     print("Word2vec vector for 'the': {}".format(w2v_vectors['the']))
     
     # create trigram
-    english_trigrams = create_ngram(english_data)
+    english_sentence_word_trigrams = create_ngram(eng_train)
     
     # get trigram vectors for all sentences
-    trigram_vectors = make_vector_trigrams(english_trigrams, w2v_vectors)
+    english_sentence_vector_trigrams = make_vector_trigrams(english_sentence_word_trigrams, w2v_vectors)
+
+    # create input features and labels out of eng_data for training the network
+    X, Y = split_data_features_labels(english_sentence_vector_trigrams)
+
+    
