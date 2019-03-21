@@ -1,5 +1,6 @@
 # Creates trigrams
 from nltk import ngrams
+import numpy as np
 
 
 def create_ngram(vocabulary):
@@ -23,7 +24,7 @@ def split_data_features_labels(trigram_sents):
     
     for sent in trigram_sents:
         for trigram in sent:
-            X.append(trigram[:2])
+            X.append(np.hstack((trigram[0], trigram[1])))
             Y.append(trigram[-1])
 
     return X, Y

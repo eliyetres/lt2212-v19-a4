@@ -1,7 +1,10 @@
+import torch
+
 from readfile import readfile
 from split_data import split_data 
 from vectorization import *
 from trigrams import create_ngram, split_data_features_labels
+from neural_network import NeuralNetwork, train_model
 
 import config
 
@@ -51,6 +54,12 @@ if __name__ == '__main__':
     english_sentence_vector_trigrams = make_vector_trigrams(english_sentence_word_trigrams, w2v_vectors)
 
     # create input features and labels out of eng_data for training the network
-    X, Y = split_data_features_labels(english_sentence_vector_trigrams)
+    X_list, Y_list = split_data_features_labels(english_sentence_vector_trigrams)
+    X = torch.Tensor(X_list)
+    X.requires_grad = True
+    Y = torch.Tensor(Y_list)
 
-    
+    # initialize model
+    input_feature_size = len(X[0])
+    model = NeuralNetwork(input_size=input_feature_size, hidden_size=1000, num_classes=len(Y))
+    model = train_model(model, X, Y, learning_rate=0.01, n_epochs=5)
