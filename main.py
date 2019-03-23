@@ -4,7 +4,7 @@ from readfile import readfile
 from split_data import split_data 
 from vectorization import *
 from trigrams import create_ngram, split_data_features_labels
-from neural_network import NeuralNetwork, train_model
+from neural_network import NeuralNetwork
 
 import config
 
@@ -56,10 +56,18 @@ if __name__ == '__main__':
     # create input features and labels out of eng_data for training the network
     X_list, Y_list = split_data_features_labels(english_sentence_vector_trigrams)
     X = torch.Tensor(X_list)
-    X.requires_grad = True
     Y = torch.Tensor(Y_list)
+
+    # import joblib
+    # joblib.dump(X, "../temp_X.pkl")
+    # joblib.dump(Y, "../temp_Y.pkl")
+    # X = joblib.load("../temp_X.pkl")
+    # Y = joblib.load("../temp_Y.pkl")
 
     # initialize model
     input_feature_size = len(X[0])
-    model = NeuralNetwork(input_size=input_feature_size, hidden_size=1000, num_classes=len(Y))
-    model = train_model(model, X, Y, learning_rate=0.01, n_epochs=5)
+    # model = NeuralNetwork(input_size=input_feature_size, hidden_size=1000, num_classes=len(Y))
+    # model = train_model(model, X, Y, learning_rate=0.01, n_epochs=50)
+
+    model = NeuralNetwork(lr=0.1)
+    model.train(X, Y, 1000, len(Y[0]), 50)
