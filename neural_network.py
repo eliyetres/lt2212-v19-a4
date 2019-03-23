@@ -71,7 +71,8 @@ class NeuralNetwork():
             # for i in range(len(X)):
             # do the forward pass
             self.forward(X_in)
-
+            # set the gradients to 0 before backpropagation
+            optimizer.zero_grad()
             # compute the loss
             # loss = Y - self.output
             loss = criterion(self.output, torch.max(Y, 1)[1])
@@ -83,4 +84,6 @@ class NeuralNetwork():
 
             # X_in = X[torch.randperm(X.size()[0])]
 
-            print ('Epoch [{}/{}], Loss: {:.4f}'.format(epoch+1, n_epochs, loss.item()))
+            print('Epoch [{}/{}], Loss: {:.4f}'.format(epoch+1, n_epochs, loss.item()))
+
+        #random.shuffle(epoch) # Shuffle or! shuffle?
