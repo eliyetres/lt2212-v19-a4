@@ -49,7 +49,7 @@ if __name__ == '__main__':
     english_sentence_word_trigrams = create_ngram(eng_train)
     
     # get trigram vectors for all sentences
-    english_sentence_vector_trigrams = make_vector_trigrams(english_sentence_word_trigrams, w2v_vectors)
+    english_sentence_vector_trigrams = make_vector_trigrams(english_sentence_word_trigrams, w2v_vectors, one_hot_encoded_vectors_eng)
 
     # create input features and labels out of eng_data for training the network
     X_list, Y_list = split_data_features_labels(english_sentence_vector_trigrams)
