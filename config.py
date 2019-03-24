@@ -6,3 +6,4 @@ french_filename = "UN-french.txt"
 
 google_model = "GoogleNews-vectors-negative300.bin"
 
+process_unit = "cpu" # gpu (fast) or cpu (slow)
