@@ -126,7 +126,13 @@ class NeuralNetwork():
             optimizer.zero_grad()
             # compute the loss
             # loss = Y - self.output
-            loss = criterion(self.output, torch.max(Y, 1)[1])
+
+            #Computing loss by built-in function
+            #loss = criterion(self.output, torch.max(Y, 1)[1])
+
+            #Compute loss by own function
+            loss = self.cross_entropy(self.output, torch.max(Y, 1)[1])
+            
             # compute gradients
             loss.backward()
 
@@ -138,3 +144,28 @@ class NeuralNetwork():
             print('Epoch [{}/{}], Loss: {:.4f}'.format(epoch+1, n_epochs, loss.item()))
 
         #random.shuffle(epoch) # shuffle the data might be useful if we decide to use batch sizes
+
+
+    def cross_entropy(self, x,y):
+                                                                                                                                                                            
+        #X is on the form num_examples x num_classes                                                                                                                                
+        #y is labels (num_examples x 1)                                                                                                                                             
+        #Note that y is not one-hot encoded vector.                                                                                                                                 
+        #It can be computed as y.argmax(axis=1) from one-hot encoded vectors of labels if required.                                                                                 
+        
+        print(y[:10])
+        
+        #If Y are one-hot encoded vectors                                                                                                                                          
+        #y = np.argmax(y, axis=1)                                                                                                                                                       
+        m = y.shape[0]
+        #p = torch.softmax(X)
+        p = torch.log_softmax(x, dim=1)                                                                                                                                            
+
+
+        # Multidimensional array indexing to extract
+        # softmax probability of the correct label for each sample.
+    
+        log_likelihood = -torch.log(p[range(m),y])
+        loss = torch.sum(log_likelihood) / m
+
+        return loss
