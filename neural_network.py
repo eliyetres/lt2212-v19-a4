@@ -42,7 +42,6 @@ import random
 class NeuralNetwork():
     def __init__(self, lr=0.01):
         self.learning_rate = lr
-        self.hiddenSize = 3
 
     def forward(self, X):
         # d = self.weights_1.dot(x)
