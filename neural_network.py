@@ -40,8 +40,14 @@ import random
 
 
 class NeuralNetwork():
-    def __init__(self, lr=0.01):
+    def __init__(self, device, lr=0.01):
         self.learning_rate = lr
+        if device == "gpu":
+            self.device = torch.device("cuda:0")
+            print("Using GPU")              
+        else: 
+            self.device = torch.device("cpu")  
+            print("Using CPU")
 
     def forward(self, X):
         # d = self.weights_1.dot(x)
@@ -71,18 +77,38 @@ class NeuralNetwork():
         #self.weights_3 = torch.zeros((hidden_size, num_classes), requires_grad=True)
         # self.weights_1 = torch.randn(input_feature_size, requires_grad=True)
         # self.weights_2 = torch.randn(num_classes, requires_grad=True)
-        self.weights_1 = torch.randn((input_feature_size, hidden_size), requires_grad=True)
-        self.weights_2 = torch.randn((hidden_size, hidden_size), requires_grad=True)
-        #2 hidden layers
-        self.weights_3 = torch.randn((hidden_size, num_classes), requires_grad=True)
+        
         #self.bias_1 = torch.zeros(1, requires_grad=True)
         #self.bias_2 = torch.zeros(1, requires_grad=True)
         # 2 hidden layers
-        #self.bias_3 = torch.zeros(1, requires_grad=True)
-        self.bias_1 = torch.randn(1, requires_grad=True)
-        self.bias_2 = torch.randn(1, requires_grad=True)
-        # 2 hidden layers
-        self.bias_3 = torch.randn(1, requires_grad=True)
+        #self.bias_3 = torch.zeros(1, requires_grad=True)      
+
+        # using 2 hidden layers
+        #self.weights_1 = torch.randn((input_feature_size, hidden_size), requires_grad=True)
+        #self.weights_2 = torch.randn((hidden_size, hidden_size), requires_grad=True)        
+        #self.weights_3 = torch.randn((hidden_size, num_classes), requires_grad=True)
+
+        #self.bias_1 = torch.randn(1, requires_grad=True)
+        #self.bias_2 = torch.randn(1, requires_grad=True)
+        #self.bias_3 = torch.randn(1, requires_grad=True)
+
+        # 2 hidden layers with GPU option
+        self.weights_1 = torch.randn((input_feature_size, hidden_size),requires_grad=True, device=self.device)    
+        self.weights_2 = torch.randn((hidden_size, hidden_size),  requires_grad=True, device=self.device)
+        self.weights_3 = torch.randn((hidden_size, num_classes), requires_grad=True, device=self.device) 
+
+        self.bias_1 = torch.randn(1, requires_grad=True, device=self.device)
+        self.bias_2 = torch.randn(1, requires_grad=True, device=self.device)
+        self.bias_3 = torch.randn(1, requires_grad=True, device=self.device)
+
+        self.weights_1 = self.weights_1.to(self.device)
+        self.weights_2 = self.weights_2.to(self.device)
+        self.weights_3 = self.weights_3.to(self.device)
+
+        self.bias_1 = self.bias_1.to(self.device)
+        self.bias_2 = self.bias_2.to(self.device)
+        self.bias_3 = self.bias_3.to(self.device)
+
 
         # initialize the optimizer
         #optimizer = torch.optim.Adam([self.weights_1, self.bias_1, self.weights_2, self.bias_2], lr=self.learning_rate)
