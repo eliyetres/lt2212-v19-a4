@@ -42,27 +42,53 @@ import random
 class NeuralNetwork():
     def __init__(self, lr=0.01):
         self.learning_rate = lr
+        self.hiddenSize = 3
 
     def forward(self, X):
         # d = self.weights_1.dot(x)
         # d = torch.sigmoid(d + self.bias_1)
         # d = d.dot(self.weights_2)
+
+        # One hidden layer
+        #d = X.mm(self.weights_1)
+        #d = torch.sigmoid(d + self.bias_1)
+        #d = d.mm(self.weights_2)
+        #self.output = torch.softmax(d + self.bias_2, dim=1)
+
+        # 2 hidden layers
         d = X.mm(self.weights_1)
         d = torch.sigmoid(d + self.bias_1)
         d = d.mm(self.weights_2)
-        self.output = torch.softmax(d + self.bias_2, dim=1)
+        d = torch.sigmoid(d + self.bias_2)
+        d = d.mm(self.weights_3)
+        # use log_softmax to avoid vanishing gradient problem
+        self.output = torch.log_softmax(d + self.bias_3, dim=1)
 
     def train(self, X, Y, hidden_size, num_classes, n_epochs=20):
-        input_feature_size = len(X[0])
-        self.weights_1 = torch.zeros((input_feature_size, hidden_size), requires_grad=True)
-        self.weights_2 = torch.zeros((hidden_size, num_classes), requires_grad=True)
+        input_feature_size = len(X[0])        
+        #self.weights_1 = torch.zeros((input_feature_size, hidden_size), requires_grad=True)
+        #self.weights_2 = torch.zeros((hidden_size, hidden_size), requires_grad=True)
+        #2 hidden layers
+        #self.weights_3 = torch.zeros((hidden_size, num_classes), requires_grad=True)
         # self.weights_1 = torch.randn(input_feature_size, requires_grad=True)
         # self.weights_2 = torch.randn(num_classes, requires_grad=True)
-        self.bias_1 = torch.zeros(1, requires_grad=True)
-        self.bias_2 = torch.zeros(1, requires_grad=True)
+        self.weights_1 = torch.randn((input_feature_size, hidden_size), requires_grad=True)
+        self.weights_2 = torch.randn((hidden_size, hidden_size), requires_grad=True)
+        #2 hidden layers
+        self.weights_3 = torch.randn((hidden_size, num_classes), requires_grad=True)
+        #self.bias_1 = torch.zeros(1, requires_grad=True)
+        #self.bias_2 = torch.zeros(1, requires_grad=True)
+        # 2 hidden layers
+        #self.bias_3 = torch.zeros(1, requires_grad=True)
+        self.bias_1 = torch.randn(1, requires_grad=True)
+        self.bias_2 = torch.randn(1, requires_grad=True)
+        # 2 hidden layers
+        self.bias_3 = torch.randn(1, requires_grad=True)
 
         # initialize the optimizer
-        optimizer = torch.optim.Adam([self.weights_1, self.bias_1, self.weights_2, self.bias_2], lr=self.learning_rate)
+        #optimizer = torch.optim.Adam([self.weights_1, self.bias_1, self.weights_2, self.bias_2], lr=self.learning_rate)
+        optimizer = torch.optim.Adam([self.weights_1, self.bias_1, self.weights_2, self.bias_2, self.weights_3, self.bias_3], lr=self.learning_rate)
+        
         criterion = CrossEntropyLoss()
 
         # X_in = X[torch.randperm(X.size()[0])]
@@ -86,4 +112,4 @@ class NeuralNetwork():
 
             print('Epoch [{}/{}], Loss: {:.4f}'.format(epoch+1, n_epochs, loss.item()))
 
-        #random.shuffle(epoch) # Shuffle or! shuffle?
+        #random.shuffle(epoch) # shuffle the data might be useful if we decide to use batch sizes
