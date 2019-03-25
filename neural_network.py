@@ -155,12 +155,9 @@ class NeuralNetwork():
         #Note that y is not one-hot encoded vector.                                                                                                                                 
         #It can be computed as y.argmax(axis=1) from one-hot encoded vectors of labels if required.                                                                                 
         
-        #print(y[:10])
-        
         #If Y are one-hot encoded vectors                                                                                                                                          
         #y = np.argmax(y, axis=1)                                                                                                                                                       
         m = y.shape[0]
-        #p = torch.softmax(X)
         p = torch.softmax(x+epsil, dim=1)                                                                                                                                            
 
         # Multidimensional array indexing to extract
@@ -169,3 +166,10 @@ class NeuralNetwork():
         loss = torch.sum(log_likelihood)/m
 
         return loss
+
+
+    def predict(X_predict):
+        
+        predicted = self.forward(X_predict)
+
+        return predicted
