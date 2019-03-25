@@ -6,7 +6,7 @@ from readfile import readfile
 from split_data import split_data
 from trigrams import create_ngram, split_data_features_labels
 from vectorization import *
-# from traintest import *
+from traintest import *
 
 
 def generate_trigram_model(eng_train, w2v_vectors, one_hot_encoded_vectors_eng):
@@ -96,5 +96,6 @@ if __name__ == '__main__':
     # X = joblib.load("../temp_X.pkl")
     # Y = joblib.load("../temp_Y.pkl")
 
-    # training(X, Y, model)
+    nr_of_words = 50
+    training(translation_model, trigram_model, eng_train, french_train, w2v_vectors, one_hot_encoded_vectors_french, nr_of_words, eng_vocabulary)
 
