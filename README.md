@@ -5,6 +5,6 @@ From Asad Sayeed's statistical NLP course at the University of Gothenburg.
 ## Group Rho ρ
 Azfar Imtiaz\
 Elin Hagman\
-Sandra Dee
+Sandra Derbring
 
 
