@@ -69,6 +69,7 @@ class NeuralNetwork():
         # use log_softmax to avoid vanishing gradient problem
         self.output = torch.log_softmax(d + self.bias_3, dim=1)
 
+        
     def train(self, X, Y, hidden_size, num_classes, n_epochs=20):
         input_feature_size = len(X[0])        
         #self.weights_1 = torch.zeros((input_feature_size, hidden_size), requires_grad=True)
@@ -168,6 +169,22 @@ class NeuralNetwork():
         return loss
 
 
-    def predict(self, X_predict):
-        predicted = self.forward(X_predict)
+    def predict(self, X):
+
+        # One hidden layer                                                                                                                                                          
+        #d = X.mm(self.weights_1)                                                                                                                                                   
+        #d = torch.sigmoid(d + self.bias_1)                                                                                                                                         
+        #d = d.mm(self.weights_2)                                                                                                                                                   
+        #self.output = torch.softmax(d + self.bias_2, dim=1)                                                                                                                        
+
+        # 2 hidden layers                                                                                                                                                           
+        d = X.mm(self.weights_1)
+        d = torch.sigmoid(d + self.bias_1)
+        d = d.mm(self.weights_2)
+        d = torch.sigmoid(d + self.bias_2)
+        d = d.mm(self.weights_3)
+
+        #Use softmax, not log_softmax
+        predicted = torch.softmax(d + self.bias_3, dim=1)
+        
         return predicted
