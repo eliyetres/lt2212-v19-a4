@@ -6,6 +6,7 @@ from readfile import readfile
 from split_data import split_data
 from trigrams import create_ngram, split_data_features_labels
 from vectorization import *
+from traintest import *
 
 if __name__ == '__main__':
     
@@ -76,5 +77,7 @@ if __name__ == '__main__':
     input_feature_size = len(X[0])
     # model = NeuralNetwork(input_size=input_feature_size, hidden_size=1000, num_classes=len(Y))
     # model = train_model(model, X, Y, learning_rate=0.01, n_epochs=50)
-  
-    model.train(X, Y, 600, len(Y[0]), 4000)
+
+    #The training is done here
+    #model.train(X, Y, 600, len(Y[0]), 4000)
+    training(X, Y, model)
