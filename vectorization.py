@@ -19,7 +19,6 @@ def get_vocabulary(ls_text):
 
 
 def remove_words(english, french, w2v_model):
-
     print("Number of English sentences: {}".format(len(english)))
     
     e_data = []
@@ -48,6 +47,7 @@ def remove_words(english, french, w2v_model):
 
     print("Words not found in model: {}".format(not_found))
     return e_data, f_data
+
 
 def generate_one_hot_encoded_vectors(ls_words):
     # encoder = OneHotEncoder(ls_words)
@@ -105,3 +105,24 @@ def make_vector_trigrams(sentences, w2v_vectors, one_hot_vectors):
     # print("{} trigram vectors were created".format(len(trigram_vectors)))
     # print("Vector for {}: {}".format(trigram1, trigram_vectors[0]))
     return sentence_vector_trigrams
+
+
+def make_translation_vectors(eng_sents, french_sents, w2v_vectors, one_hot_encoded_vectors_french):
+    translation_vectors_X = []
+    translation_vectors_Y = []
+    for sent_index in range(len(eng_sents)):
+        # get the english and french sentences
+        eng_sent = eng_sents[sent_index]
+        french_sent = french_sents[sent_index]
+        for w_index in range(len(eng_sent)):
+            # get the english and french word
+            eng_word = eng_sent[w_index]
+            french_word = french_sent[w_index]
+            # get the english (w2v) and french (one hot) word vectors
+            eng_word_vector = w2v_vectors[eng_word]
+            french_word_vector = one_hot_encoded_vectors_french[french_word]
+            # english word vector is input, french word vector is output
+            translation_vectors_X.append(eng_word_vector)
+            translation_vectors_Y.append(french_word_vector)
+
+    return translation_vectors_X, translation_vectors_Y

@@ -168,8 +168,6 @@ class NeuralNetwork():
         return loss
 
 
-    def predict(X_predict):
-        
+    def predict(self, X_predict):
         predicted = self.forward(X_predict)
-
         return predicted

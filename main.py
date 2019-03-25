@@ -6,7 +6,50 @@ from readfile import readfile
 from split_data import split_data
 from trigrams import create_ngram, split_data_features_labels
 from vectorization import *
-from traintest import *
+# from traintest import *
+
+
+def generate_trigram_model(eng_train, w2v_vectors, one_hot_encoded_vectors_eng):
+    # create trigrams
+    english_sentence_word_trigrams = create_ngram(eng_train)
+    # get trigram vectors for all sentences
+    english_sentence_vector_trigrams = make_vector_trigrams(english_sentence_word_trigrams, w2v_vectors, one_hot_encoded_vectors_eng)
+    # create input features and labels out of eng_data for training the network
+    X_list, Y_list = split_data_features_labels(english_sentence_vector_trigrams)
+
+    if config.process_unit == "gpu":
+        # Using GPU (fast)
+        X = torch.cuda.FloatTensor(X_list) # gpu variable must have input type FloatTensor
+        Y = torch.cuda.FloatTensor(Y_list) 
+        trigram_eng_model = NeuralNetwork("gpu", lr=0.01) 
+    else: 
+        # Using CPU (slow)
+        X = torch.Tensor(X_list) 
+        Y = torch.Tensor(Y_list) 
+        trigram_eng_model = NeuralNetwork("cpu", lr=0.01)
+    
+    # The training for trigram model is done here
+    trigram_eng_model.train(X, Y, 600, len(Y[0]), 20)
+    return trigram_eng_model
+
+
+def generate_translation_model(eng_train, french_train, w2v_vectors, one_hot_encoded_vectors_french):
+    X_list, Y_list = make_translation_vectors(eng_train, french_train, w2v_vectors, one_hot_encoded_vectors_french)
+    if config.process_unit == "gpu":
+        # Using GPU (fast)
+        X = torch.cuda.FloatTensor(X_list) # gpu variable must have input type FloatTensor
+        Y = torch.cuda.FloatTensor(Y_list) 
+        translation_model = NeuralNetwork("gpu", lr=0.01) 
+    else: 
+        # Using CPU (slow)
+        X = torch.Tensor(X_list) 
+        Y = torch.Tensor(Y_list) 
+        translation_model = NeuralNetwork("cpu", lr=0.01)
+
+    # The training for translation model is done here
+    translation_model.train(X, Y, 600, len(Y[0]), 20)
+    return translation_model
+
 
 if __name__ == '__main__':
     
@@ -29,7 +72,6 @@ if __name__ == '__main__':
     # get vocabulary from training and testing data
     print("Generating vocabulary for target text...")
     eng_vocabulary = get_vocabulary(english_data)
-    #print(eng_vocabulary)
     
     print("Generating vocabulary for source text...")
     french_vocabulary = get_vocabulary(french_data)
@@ -37,47 +79,22 @@ if __name__ == '__main__':
     # get one hot encoded vectors for training and testing data
     one_hot_encoded_vectors_eng = generate_one_hot_encoded_vectors(eng_vocabulary)
     one_hot_encoded_vectors_french = generate_one_hot_encoded_vectors(french_vocabulary)
-    # for index in range(len(one_hot_encoded_vectors_eng)):
-    #     print(eng_vocabulary[index])
-    #     print(one_hot_encoded_vectors_eng[index])
-
+    
     # get word2vec vectors for training and testing data
     w2v_vectors = get_w2v_vectors(w2v_model, eng_vocabulary)
-    #print("One hot encoded vector for 'the': {}".format(one_hot_encoded_vectors_eng['the']))
-    #print("Word2vec vector for 'the': {}".format(w2v_vectors['the']))
     
-    # create trigram
-    english_sentence_word_trigrams = create_ngram(eng_train)
+    print("Training trigram model...")
+    trigram_model = generate_trigram_model(eng_train, w2v_vectors, one_hot_encoded_vectors_eng)
     
-    # get trigram vectors for all sentences
-    english_sentence_vector_trigrams = make_vector_trigrams(english_sentence_word_trigrams, w2v_vectors, one_hot_encoded_vectors_eng)
-
-    # create input features and labels out of eng_data for training the network
-    X_list, Y_list = split_data_features_labels(english_sentence_vector_trigrams)
-
-    if config.process_unit == "gpu":
-        # Using GPU (fast)
-        X = torch.cuda.FloatTensor(X_list) # gpu variable must have input type FloatTensor
-        Y = torch.cuda.FloatTensor(Y_list) 
-        model = NeuralNetwork("gpu", lr=0.1) 
-    else: 
-        # Using CPU (slow)
-        X = torch.Tensor(X_list) 
-        Y = torch.Tensor(Y_list) 
-        model = NeuralNetwork("cpu", lr=0.1)
+    print("Training translation model...")
+    translation_model = generate_translation_model(eng_train, french_train, w2v_vectors, one_hot_encoded_vectors_french)
     
-
+    
     # import joblib
     # joblib.dump(X, "../temp_X.pkl")
     # joblib.dump(Y, "../temp_Y.pkl")
     # X = joblib.load("../temp_X.pkl")
     # Y = joblib.load("../temp_Y.pkl")
 
-    # initialize model
-    input_feature_size = len(X[0])
-    # model = NeuralNetwork(input_size=input_feature_size, hidden_size=1000, num_classes=len(Y))
-    # model = train_model(model, X, Y, learning_rate=0.01, n_epochs=50)
+    # training(X, Y, model)
 
-    #The training is done here
-    #model.train(X, Y, 600, len(Y[0]), 4000)
-    training(X, Y, model)
