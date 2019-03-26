@@ -97,5 +97,5 @@ if __name__ == '__main__':
     # Y = joblib.load("../temp_Y.pkl")
 
     nr_of_words = 50
-    training(translation_model, trigram_model, eng_train, french_train, w2v_vectors, one_hot_encoded_vectors_french, nr_of_words, eng_vocabulary)
-
+    # training(translation_model, trigram_model, eng_train, french_train, w2v_vectors, one_hot_encoded_vectors_french, nr_of_words, eng_vocabulary)
+    test_translation(eng_test, french_test, eng_vocabulary, french_vocabulary, w2v_vectors, one_hot_encoded_vectors_eng, one_hot_encoded_vectors_french, trigram_model, translation_model)
