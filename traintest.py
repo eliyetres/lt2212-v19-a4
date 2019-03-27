@@ -102,7 +102,9 @@ def get_top_n_predictions(next_word_pred, n=50):
     sorted_preds = sorted(next_word_pred, reverse=False)
     top_n_indices = []
     for i in range(0, n):
-        index = next_word_pred.index( sorted_preds[i] )
+        #index = next_word_pred.index( sorted_preds[i] )
+        nwp_as_np = next_word_pred.detach().numpy()
+        index = np.where(nwp_as_np == sorted_preds[i])[0][0]
         top_n_indices.append(index)
     return top_n_indices
 
@@ -116,6 +118,12 @@ def get_top_n_predictions(next_word_pred, n=50):
 #       choose the english word which gives this french word as output -> how to do this?
 #       Take <start> and this english word, feed to trigram model
 def test_translation(eng_test, french_test, eng_vocab, french_vocab, w2v_vectors, one_hot_eng, one_hot_french, trigram_model, translation_model):
+
+    #Output variables
+    #Measurements should be accuracy, precision, recall and F1_score
+    total_translations = 0
+    correct_translations = 0
+    
     # create trigrams out of eng test data# create trigrams out of eng test data
     eng_trigrams = create_ngram(eng_test)
     
@@ -127,6 +135,8 @@ def test_translation(eng_test, french_test, eng_vocab, french_vocab, w2v_vectors
     english_vectors_tensor = torch.Tensor(english_vectors)
 
     for index in range(len(french_test)):
+        #get first english original word
+        first_english_original = eng_test[index][0]
         # get first french word
         first_french_word = french_test[index][0]
         first_french_word_index = french_vocab.index(first_french_word)
@@ -152,16 +162,30 @@ def test_translation(eng_test, french_test, eng_vocab, french_vocab, w2v_vectors
         translated_word = get_predicted_word(translated_vector, eng_vocab)
         print(translated_word)
 
+        # calculates scores
+        total_translations += 1
+        if translated_word == first_english_original:
+            correct_translation +=1
+
         # the trigram now will be <start> and translated_word
         first_word = '<start>'
         second_word = translated_word
-        for word_index in french_test[index]:
-            bigram = np.concatenate((w2v_vectors[first_word], w2v_vectors[second_word]))
+        #for word_index in french_test[index]:
+        for word_index in range(len(french_test)):
+
+            #bigram = np.concatenate((w2v_vectors[first_word], w2v_vectors[second_word]))
+            bigram = np.hstack((w2v_vectors[first_word], w2v_vectors[second_word]))
+            bigram = torch.Tensor([bigram])
+            print(bigram.shape)
+
             try:
                 next_word_pred = trigram_model.predict(bigram)
             except:
                 next_word_pred = trigram_model.predict([bigram])
 
+            #next english original word
+            next_english_original = eng_test[index][word_index+1]
+                
             top_50_prediction_indices = get_top_n_predictions(next_word_pred, n=50)
             next_french_word = french_test[index][word_index+1]
             next_french_word_index = french_vocab[next_french_word]
@@ -182,5 +206,11 @@ def test_translation(eng_test, french_test, eng_vocab, french_vocab, w2v_vectors
 
             translated_word = get_predicted_word(translated_vector, eng_vocab)
             print(translated_word)
+
+            # calculates scores
+            total_translations += 1
+            if translated_word == next_english_original:
+                correct_translation +=1
+
             first_word = second_word
             second_word = translated_word
