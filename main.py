@@ -6,8 +6,8 @@ from readfile import readfile
 from split_data import split_data
 from trigrams import create_ngram, split_data_features_labels
 from vectorization import *
-from traintest import *
-
+#from traintest import *
+from new_traintest import *
 
 def generate_trigram_model(eng_train, w2v_vectors, one_hot_encoded_vectors_eng):
     # create trigrams
