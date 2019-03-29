@@ -13,7 +13,7 @@ def get_predicted_word(predictions, vocab):
 
     max_index, max_value = max(enumerate(predictions), key=operator.itemgetter(1))
 
-    print("Max index, length of vocabulary, {}".format(max_index, len(vocab)))
+    print("Max index {}, length of vocabulary, {}".format(max_index, len(vocab)))
     #print("Max value: {}".format(max_value))
     return vocab[max_index]
 
@@ -33,7 +33,7 @@ def get_top_n_predictions(next_word_pred, n=50):
     top_n_indices = []
     
     for i in range(0, n):
-        #index = next_word_pred.index( sorted_preds[i] )
+        # index = next_word_pred.index( sorted_preds[i] )
 
         index = indices[0][i]
         top_n_indices.append(index)
@@ -77,8 +77,7 @@ def test_translation(eng_test, french_test, eng_vocab, french_vocab, w2v_vectors
         
         translated_english_words = []
 
-        
-        #get first english original word
+        # get first english original word
         first_english_original = eng_test[index][0]
         # get first french word
         first_french_word = french_test[index][0]
@@ -88,12 +87,12 @@ def test_translation(eng_test, french_test, eng_vocab, french_vocab, w2v_vectors
         translated_vector = None
         max_pred_score = -1
         # cycle through all predictions
-        for pred in predictions:
+        for i, pred in enumerate(predictions):
             # get score for this word's prediction from one hot output            
             pred_score = get_score_for_word(pred, first_french_word_index)
             if pred_score > max_pred_score:
                 max_pred_score = pred_score
-                translated_vector = pred
+                translated_vector = english_vectors_tensor[i]
 
             # get corresponding french word of predicted vector
             # predicted_word = get_predicted_word(pred, french_vocab)
@@ -104,26 +103,25 @@ def test_translation(eng_test, french_test, eng_vocab, french_vocab, w2v_vectors
 
         # get the corresponding english word of this vector
         translated_word = get_predicted_word(translated_vector, eng_vocab)
-        print("First word translated into: {}".format(translated_word))
+        print("First translated word is: %s" % translated_word)
+        # print("First word translated into: {}".format(translated_word))
 
         translated_english_words.append(translated_word)
         
         # calculates scores
         total_translations += 1
         if translated_word == first_english_original:
-            correct_translation +=1
+            correct_translations += 1
 
         # the trigram now will be <start> and translated_word
         first_word = '<start>'
         second_word = translated_word
-        #for word_index in french_test[index]:
-        for word_index in range(1, len(french_test[index])): #Looping from 1 to end of sentence, skipping index 0
+        # for word_index in french_test[index]:
+        for word_index in range(1, len(french_test[index])):  # Looping from 1 to end of sentence, skipping index 0
 
-            #print("Word {}, {}".format(word_index+1, french_test[index][word_index+1]))
-            print("Word {}, {}".format(word_index, french_test[index][word_index]))
+            # print("Word {}, {}".format(word_index+1, french_test[index][word_index+1]))
+            # print("Word {}, {}".format(word_index, french_test[index][word_index]))
 
-            
-            #bigram = np.concatenate((w2v_vectors[first_word], w2v_vectors[second_word]))
             bigram = np.hstack((w2v_vectors[first_word], w2v_vectors[second_word]))
             bigram = torch.Tensor([bigram])
 
@@ -134,30 +132,27 @@ def test_translation(eng_test, french_test, eng_vocab, french_vocab, w2v_vectors
             
             top_50_prediction_indices = get_top_n_predictions(next_word_pred, n=50)
 
-            #next_french_word = french_test[index][word_index+1]
-            next_french_word = french_test[index][word_index]            
+            # next_french_word = french_test[index][word_index+1]
+            next_french_word = french_test[index][word_index]
 
-            #next_french_word_index = french_vocab[next_french_word]
+            # next_french_word_index = french_vocab[next_french_word]
             next_french_word_index = french_vocab.index(next_french_word)
             
             max_pred_score = -1
-            translated_vector = None
-
-            #Make a list
-            eng_word_vectors = []
+            translated_word = None
 
             for pred_index in top_50_prediction_indices:
                 eng_word = eng_vocab[pred_index]
                 eng_word_vector = w2v_vectors[eng_word]
 
-                #Append vector to the list
-                eng_word_vectors.append(eng_word_vector)
+                # Append vector to the list
+                eng_word_vector = [eng_word_vector]
 
-                #Make it a tensor out of the list
-                vector_tensor = torch.Tensor(eng_word_vectors)
+                # Make it a tensor out of the list
+                vector_tensor = torch.Tensor(eng_word_vector)
 
                 try:
-                    translated_pred = translation_model.predict(vector_tensor) #was eng_word_vector
+                    translated_pred = translation_model.predict(vector_tensor)  # was eng_word_vector
                 except:
                     translated_pred = translation_model.predict([vector_tensor])
 
@@ -166,17 +161,17 @@ def test_translation(eng_test, french_test, eng_vocab, french_vocab, w2v_vectors
                     
                 score = get_score_for_word(translated_pred, next_french_word_index)
                 if score > max_pred_score:
-                    score = max_pred_score
-                    translated_vector = translated_pred
+                    max_pred_score = score
+                    translated_word = eng_word
 
-            translated_word = get_predicted_word(translated_vector, eng_vocab)
-            print("Translated into: {}".format(translated_word))
+            # translated_word = get_predicted_word(translated_vector, eng_vocab)
+            # print("Translated into: {}".format(translated_word))
             translated_english_words.append(translated_word)
             
             # calculates scores
             total_translations += 1
-            if translated_word == next_english_original:
-                correct_translation +=1
+            # if translated_word == next_english_original:
+            #     correct_translations +=1
 
             first_word = second_word
             second_word = translated_word
