@@ -4,6 +4,7 @@ import torch
 import operator
 import numpy as np
 from trigrams import create_ngram
+from sklearn.metrics import classification_report
 
 
 def get_predicted_word(predictions, vocab):
@@ -52,10 +53,10 @@ def get_top_n_predictions(next_word_pred, n=50):
 
 def test_translation(eng_test, french_test, eng_vocab, french_vocab, w2v_vectors, one_hot_eng, one_hot_french, trigram_model, translation_model):
 
-    #Output variables
-    #Measurements should be accuracy, precision, recall and F1_score
-    total_translations = 0
-    correct_translations = 0
+    # Output variables
+    # Measurements should be accuracy, precision, recall and F1_score
+    actual_translations = []
+    predicted_translations = []
     
     # create trigrams out of eng test data# create trigrams out of eng test data
     eng_trigrams = create_ngram(eng_test)
@@ -97,22 +98,13 @@ def test_translation(eng_test, french_test, eng_vocab, french_vocab, w2v_vectors
                 # translated_vector = english_vectors[i]
                 translated_word = eng_vocab[i]
 
-            # get corresponding french word of predicted vector
-            # predicted_word = get_predicted_word(pred, french_vocab)
-            # if predicted word = first french word, we need this english word; break here
-            # if predicted_word == first_french_word:
-            #     translated_vector = pred
-            #     break
-
         # get the corresponding english word of this vector
         # translated_word = get_predicted_word(translated_vector, eng_vocab)
         translated_english_words.append(translated_word)
         
-        # calculates scores
-        total_translations += 1
-        if translated_word == first_english_original:
-            correct_translations += 1
-
+        actual_translations.append(first_english_original)
+        predicted_translations.append(translated_word)
+        
         # the trigram now will be <start> and translated_word
         first_word = '<start>'
         second_word = translated_word
@@ -164,9 +156,11 @@ def test_translation(eng_test, french_test, eng_vocab, french_vocab, w2v_vectors
             #         translated_word = eng_word
 
             translated_english_words.append(translated_word)
+            actual_translations.append(eng_test[index][word_index])
+            predicted_translations.append(translated_word)
             
             # calculates scores
-            total_translations += 1
+            # total_translations += 1
             # if translated_word == next_english_original:
             #     correct_translations +=1
 
@@ -174,3 +168,5 @@ def test_translation(eng_test, french_test, eng_vocab, french_vocab, w2v_vectors
             second_word = translated_word
 
         print("Translated sentence: {}".format(translated_english_words))
+
+    print(classification_report(actual_translations, predicted_translations))
