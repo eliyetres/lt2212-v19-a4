@@ -19,35 +19,40 @@ def generate_trigram_model(eng_train, w2v_vectors, one_hot_encoded_vectors_eng):
 
     if config.process_unit == "gpu":
         # Using GPU (fast)
-        X = torch.cuda.FloatTensor(X_list) # gpu variable must have input type FloatTensor
-        Y = torch.cuda.FloatTensor(Y_list) 
-        trigram_eng_model = NeuralNetwork("gpu", lr=0.01) 
+        #X = torch.cuda.FloatTensor(X_list) # gpu variable must have input type FloatTensor
+        #Y = torch.cuda.FloatTensor(Y_list) 
+        trigram_eng_model = NeuralNetwork("gpu", lr=0.01)
     else: 
         # Using CPU (slow)
-        X = torch.Tensor(X_list) 
-        Y = torch.Tensor(Y_list) 
+        #X = torch.Tensor(X_list) 
+        #Y = torch.Tensor(Y_list) 
         trigram_eng_model = NeuralNetwork("cpu", lr=0.01)
     
     # The training for trigram model is done here
-    trigram_eng_model.train(X, Y, 600, len(Y[0]), 20)
+    #trigram_eng_model.train(X, Y, 600, len(Y[0]), 20)
+    trigram_eng_model.train(X_list, Y_list, 600, len(Y_list[0]), 20)
     return trigram_eng_model
 
 
 def generate_translation_model(eng_train, french_train, w2v_vectors, one_hot_encoded_vectors_french):
     X_list, Y_list = make_translation_vectors(eng_train, french_train, w2v_vectors, one_hot_encoded_vectors_french)
+
     if config.process_unit == "gpu":
         # Using GPU (fast)
-        X = torch.cuda.FloatTensor(X_list) # gpu variable must have input type FloatTensor
-        Y = torch.cuda.FloatTensor(Y_list) 
-        translation_model = NeuralNetwork("gpu", lr=0.01) 
+        #X = torch.cuda.FloatTensor(X_list) # gpu variable must have input type FloatTensor
+        #Y = torch.cuda.FloatTensor(Y_list) 
+        translation_model = NeuralNetwork("gpu", lr=0.01)
+        
     else: 
         # Using CPU (slow)
-        X = torch.Tensor(X_list) 
-        Y = torch.Tensor(Y_list) 
+        #X = torch.Tensor(X_list) 
+        #Y = torch.Tensor(Y_list) 
         translation_model = NeuralNetwork("cpu", lr=0.01)
 
     # The training for translation model is done here
-    translation_model.train(X, Y, 600, len(Y[0]), 20)
+    #translation_model.train(X, Y, 600, len(Y[0]), 20)
+    translation_model.train(X_list, Y_list, 600, len(Y_list[0]), 20)
+
     return translation_model
 
 
