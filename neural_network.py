@@ -113,7 +113,6 @@ class NeuralNetwork():
         self.bias_2 = self.bias_2.to(self.device)
         self.bias_3 = self.bias_3.to(self.device)
 
-
         # initialize the optimizer
         #optimizer = torch.optim.Adam([self.weights_1, self.bias_1, self.weights_2, self.bias_2], lr=self.learning_rate)
         optimizer = torch.optim.Adam([self.weights_1, self.bias_1, self.weights_2, self.bias_2, self.weights_3, self.bias_3], lr=self.learning_rate)
@@ -121,18 +120,16 @@ class NeuralNetwork():
         criterion = CrossEntropyLoss()
 
         print(type(Y))
+        X_Y_zipped = list(zip(X, Y))
         
-        random.seed(0)
-        X_sample = random.sample(X, self.batch_size)
-        random.seed(0)
-        Y_sample = random.sample(Y, self.batch_size)
-
         for epoch in range(n_epochs):
             print("Starting epoch {}".format(epoch))
-            # for i in range(len(X)):
             
+            random.shuffle(X_Y_zipped)
+            X, Y = zip(*X_Y_zipped)
+            X_sample = X[:self.batch_size]
+            Y_sample = Y[:self.batch_size]
             X_in, Y_in = self.make_tensor(X_sample, Y_sample)
-            
 
             # do the forward pass
             self.forward(X_in)
@@ -140,13 +137,10 @@ class NeuralNetwork():
             # set the gradients to 0 before backpropagation
             optimizer.zero_grad()
 
-            # compute the loss - not used
-            # loss = Y - self.output
-
             #Computing loss by built-in function - not used
             #loss = criterion(self.output, torch.max(Y, 1)[1])
 
-            #Compute loss by own function - used
+            # Compute loss by own function - used
             loss = self.cross_entropy_cat(self.output, torch.max(Y_in, 1)[1])
 
             # compute gradients
@@ -155,17 +149,8 @@ class NeuralNetwork():
             # update weights
             optimizer.step()
 
-            #X_in = X[torch.randperm(X.size()[0])]
-            random.seed(epoch+1)
-            X_sample = random.sample(X, self.batch_size)
-            random.seed(epoch+1)
-            Y_sample = random.sample(Y, self.batch_size)
-            
             print('Epoch [{}/{}], Loss: {:.4f}'.format(epoch+1, n_epochs, loss.item()))
-            #print('Epoch [{}/{}], Loss: {:.4f}'.format(epoch+1, n_epochs, loss))
-
-        #random.shuffle(epoch) # shuffle the data might be useful if we decide to use batch sizes
-
+        
 
     def cross_entropy_cat(self, x,y, epsil=1e-12):
                                                                                                                                                                             
