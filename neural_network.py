@@ -49,6 +49,7 @@ class NeuralNetwork():
             self.device = torch.device("cpu")  
             print("Using CPU")
 
+    
     def forward(self, X):
         # d = self.weights_1.dot(x)
         # d = torch.sigmoid(d + self.bias_1)
@@ -71,6 +72,7 @@ class NeuralNetwork():
 
         
     def train(self, X, Y, hidden_size, num_classes, n_epochs=20):
+        print(self.device)
         input_feature_size = len(X[0])        
         #self.weights_1 = torch.zeros((input_feature_size, hidden_size), requires_grad=True)
         #self.weights_2 = torch.zeros((hidden_size, hidden_size), requires_grad=True)
@@ -120,26 +122,46 @@ class NeuralNetwork():
         # X_in = X[torch.randperm(X.size()[0])]
         X_in = X
         for epoch in range(n_epochs):
+            print("Starting epoch{}".format(epoch))
             # for i in range(len(X)):
+
+            nr_of_batches = len(X_in)/128
+            batchsize = 128
+            batch = 0
+            
+            for i in range(0, len(X_in), batchsize):
+                  print("Starting batch {} of {} for epoch {}".format(batch, nr_of_batches, epoch))
+                  x_batch = X_in[i:i+batchsize]
+                  y_batch = Y[i:i+batchsize]
+                  X_tensor, Y_tensor = self.make_tensor(x_batch, y_batch)
+                  self.forward(X_tensor)
+                  optimizer.zero_grad()
+                  loss = self.cross_entropy_cat(self.output, torch.max(Y_tensor, 1)[1])
+                  loss.backward()
+                  optimizer.step()
+                  print("\n")
+                  batch +=1
+
             # do the forward pass
-            self.forward(X_in)
+            #self.forward(X_in)
+
             # set the gradients to 0 before backpropagation
-            optimizer.zero_grad()
-            # compute the loss
+            #optimizer.zero_grad()
+
+            # compute the loss - not used
             # loss = Y - self.output
 
-            #Computing loss by built-in function
+            #Computing loss by built-in function - not used
             #loss = criterion(self.output, torch.max(Y, 1)[1])
 
-            #Compute loss by own function
-            loss = self.cross_entropy_cat(self.output, torch.max(Y, 1)[1])
-            
+            #Compute loss by own function - used
+            #loss = self.cross_entropy_cat(self.output, torch.max(Y, 1)[1])
 
             # compute gradients
-            loss.backward()
+            #loss.backward()
 
             # update weights
-            optimizer.step()
+            #optimizer.step()
 
             # X_in = X[torch.randperm(X.size()[0])]
 
@@ -188,3 +210,17 @@ class NeuralNetwork():
         predicted = torch.softmax(d + self.bias_3, dim=1)
         
         return predicted
+
+    
+    def make_tensor(self, X_list, Y_list):
+
+        if self.device == "cuda:0":
+            # Using GPU (fast)                                                                                                                                                      
+            X = torch.cuda.FloatTensor(X_list) # gpu variable must have input type FloatTensor                                                                                      
+            Y = torch.cuda.FloatTensor(Y_list)
+        else:
+        # Using CPU (slow)                                                                                                                                                    
+            X = torch.Tensor(X_list)
+            Y = torch.Tensor(Y_list)
+
+        return X, Y
