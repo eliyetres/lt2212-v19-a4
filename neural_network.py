@@ -40,8 +40,9 @@ import random
 
 
 class NeuralNetwork():
-    def __init__(self, device, lr=0.01):
+    def __init__(self, device, lr=0.01, batch_size=100):
         self.learning_rate = lr
+        self.batch_size = 100
         if device == "gpu":
             self.device = torch.device("cuda:0")
             print("Using GPU")              
@@ -119,17 +120,12 @@ class NeuralNetwork():
         
         criterion = CrossEntropyLoss()
 
-        batch_size = 100
-        
-        #X_in = X[torch.randperm(X.size()[0])]
-        #X_in = X
-
         print(type(Y))
         
         random.seed(0)
-        X_sample = random.sample(X, 100)
+        X_sample = random.sample(X, self.batch_size)
         random.seed(0)
-        Y_sample = random.sample(Y, 100)
+        Y_sample = random.sample(Y, self.batch_size)
 
         for epoch in range(n_epochs):
             print("Starting epoch {}".format(epoch))
@@ -161,9 +157,9 @@ class NeuralNetwork():
 
             #X_in = X[torch.randperm(X.size()[0])]
             random.seed(epoch+1)
-            X_sample = random.sample(X, 100)
+            X_sample = random.sample(X, self.batch_size)
             random.seed(epoch+1)
-            Y_sample = random.sample(Y, 100)
+            Y_sample = random.sample(Y, self.batch_size)
             
             print('Epoch [{}/{}], Loss: {:.4f}'.format(epoch+1, n_epochs, loss.item()))
             #print('Epoch [{}/{}], Loss: {:.4f}'.format(epoch+1, n_epochs, loss))
