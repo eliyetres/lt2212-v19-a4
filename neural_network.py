@@ -119,34 +119,30 @@ class NeuralNetwork():
         
         criterion = CrossEntropyLoss()
 
-        # X_in = X[torch.randperm(X.size()[0])]
-        X_in = X
-        for epoch in range(n_epochs):
-            print("Starting epoch{}".format(epoch))
-            # for i in range(len(X)):
+        batch_size = 100
+        
+        #X_in = X[torch.randperm(X.size()[0])]
+        #X_in = X
 
-            nr_of_batches = len(X_in)/128
-            batchsize = 128
-            batch = 0
+        print(type(Y))
+        
+        random.seed(0)
+        X_sample = random.sample(X, 100)
+        random.seed(0)
+        Y_sample = random.sample(Y, 100)
+
+        for epoch in range(n_epochs):
+            print("Starting epoch {}".format(epoch))
+            # for i in range(len(X)):
             
-            for i in range(0, len(X_in), batchsize):
-                  print("Starting batch {} of {} for epoch {}".format(batch, nr_of_batches, epoch))
-                  x_batch = X_in[i:i+batchsize]
-                  y_batch = Y[i:i+batchsize]
-                  X_tensor, Y_tensor = self.make_tensor(x_batch, y_batch)
-                  self.forward(X_tensor)
-                  optimizer.zero_grad()
-                  loss = self.cross_entropy_cat(self.output, torch.max(Y_tensor, 1)[1])
-                  loss.backward()
-                  optimizer.step()
-                  print("\n")
-                  batch +=1
+            X_in, Y_in = self.make_tensor(X_sample, Y_sample)
+            
 
             # do the forward pass
-            #self.forward(X_in)
+            self.forward(X_in)
 
             # set the gradients to 0 before backpropagation
-            #optimizer.zero_grad()
+            optimizer.zero_grad()
 
             # compute the loss - not used
             # loss = Y - self.output
@@ -155,16 +151,20 @@ class NeuralNetwork():
             #loss = criterion(self.output, torch.max(Y, 1)[1])
 
             #Compute loss by own function - used
-            #loss = self.cross_entropy_cat(self.output, torch.max(Y, 1)[1])
+            loss = self.cross_entropy_cat(self.output, torch.max(Y_in, 1)[1])
 
             # compute gradients
-            #loss.backward()
+            loss.backward()
 
             # update weights
-            #optimizer.step()
+            optimizer.step()
 
-            # X_in = X[torch.randperm(X.size()[0])]
-
+            #X_in = X[torch.randperm(X.size()[0])]
+            random.seed(epoch+1)
+            X_sample = random.sample(X, 100)
+            random.seed(epoch+1)
+            Y_sample = random.sample(Y, 100)
+            
             print('Epoch [{}/{}], Loss: {:.4f}'.format(epoch+1, n_epochs, loss.item()))
             #print('Epoch [{}/{}], Loss: {:.4f}'.format(epoch+1, n_epochs, loss))
 
