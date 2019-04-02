@@ -74,6 +74,7 @@ class NeuralNetwork():
         
     def train(self, X, Y, hidden_size, num_classes, n_epochs=20):
         print(self.device)
+
         input_feature_size = len(X[0])        
         #self.weights_1 = torch.zeros((input_feature_size, hidden_size), requires_grad=True)
         #self.weights_2 = torch.zeros((hidden_size, hidden_size), requires_grad=True)
@@ -130,6 +131,8 @@ class NeuralNetwork():
             X_sample = X[:self.batch_size]
             Y_sample = Y[:self.batch_size]
             X_in, Y_in = self.make_tensor(X_sample, Y_sample)
+            X_in = X_in.to(self.device)
+            Y_in = Y_in.to(self.device)
 
             # do the forward pass
             self.forward(X_in)
