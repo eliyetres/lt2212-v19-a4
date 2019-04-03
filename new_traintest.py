@@ -83,6 +83,8 @@ def test_translation(eng_test, french_test, eng_vocab, french_vocab, w2v_vectors
     
     for index in range(len(french_test)):
 
+        if len(french_test[index]) == 0:
+            continue
         # for testing only
         # french_test[index] = ["l'atelier", 'aura', 'lieu', 'aux', 'dates', 'ci-après', 'lundi', 'novembre', 'de', 'à', 'heures', 'et', 'de', 'heures', 'novembre', 'de', 'heures', 'mercredi', 'novembre', 'de', 'à']
         # eng_test[index] = ['the', 'workshop', 'will', 'be', 'held', 'on', 'the', 'following', 'dates', 'monday', 'november', 'from', 'am', 'pm', 'from', 'pm', 'pm', 'tuesday', 'november', 'from', 'pm']
