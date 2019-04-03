@@ -45,7 +45,7 @@ def remove_words(english, french, w2v_model):
         e_data.append(english_sentence)
         f_data.append(french_sentence)
 
-    print("Words not found in model: {}".format(not_found))
+    #print("Words not found in model: {}".format(not_found))
     return e_data, f_data
 
 
