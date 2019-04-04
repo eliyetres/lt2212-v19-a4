@@ -5,13 +5,20 @@ import operator
 import numpy as np
 from trigrams import create_ngram
 from sklearn.metrics import classification_report
+from config import process_unit
+
+if process_unit == "gpu":
+    device = "cuda:0"
+else:
+    device = "cpu"
 
 
-def make_tensor(vector_list, unit):
+def make_tensor(vector_list):
 
-    if unit == "gpu":
+    if device == "cuda:0":
         # Using GPU (fast)                                                                                                                                                          
-        X = torch.cuda.FloatTensor(vector_list) # gpu variable must have input type FloatTensor                                                                                           
+        #X = torch.cuda.FloatTensor(vector_list, device=device) # gpu variable must have input type FloatTensor
+        X = torch.as_tensor(vector_list, dtype=torch.float, device=device)    
     else:
         # Using CPU (slow)                                                                                                                                                          
         X = torch.Tensor(vector_list)
@@ -41,7 +48,11 @@ def get_top_n_predictions(next_word_pred, n=50):
 
     # next_word_pred is a Tensor
     # use sorting method of torch, returning indices
+    next_word_pred = next_word_pred.to(device)
     sorted_preds, indices = torch.sort(next_word_pred, descending=True)
+    sorted_preds = sorted_preds.to(device)
+    indices = indices.to(device)
+
 
     top_n_indices = []
     
@@ -71,7 +82,7 @@ def test_translation(eng_test, french_test, eng_vocab, french_vocab, w2v_vectors
     predicted_translations = []
     
     # create trigrams out of eng test data# create trigrams out of eng test data
-    eng_trigrams = create_ngram(eng_test)
+    #eng_trigrams = create_ngram(eng_test)
     
     # create a list of w2v vectors of all english words in vocab
     english_vectors = []
@@ -79,19 +90,19 @@ def test_translation(eng_test, french_test, eng_vocab, french_vocab, w2v_vectors
         vect = w2v_vectors[word]
         english_vectors.append(vect)
     #english_vectors_tensor = torch.Tensor(english_vectors)
-    english_vectors_tensor = make_tensor(english_vectors, unit)
+    english_vectors_tensor = make_tensor(english_vectors)
+    english_vectors_tensor = english_vectors_tensor.to(device)
     
     for index in range(len(french_test)):
-
         if len(french_test[index]) == 0:
             continue
         # for testing only
         # french_test[index] = ["l'atelier", 'aura', 'lieu', 'aux', 'dates', 'ci-après', 'lundi', 'novembre', 'de', 'à', 'heures', 'et', 'de', 'heures', 'novembre', 'de', 'heures', 'mercredi', 'novembre', 'de', 'à']
         # eng_test[index] = ['the', 'workshop', 'will', 'be', 'held', 'on', 'the', 'following', 'dates', 'monday', 'november', 'from', 'am', 'pm', 'from', 'pm', 'pm', 'tuesday', 'november', 'from', 'pm']
 
-        print("Sentence {}".format(index))
-        print("French sentence: {}".format(french_test[index]))
-        print("English sentence: {}".format(eng_test[index]))
+        #print("Sentence {}".format(index))
+        #print("French sentence: {}".format(french_test[index]))
+        #print("English sentence: {}".format(eng_test[index]))
 
         translated_english_words = []
 
@@ -102,6 +113,7 @@ def test_translation(eng_test, french_test, eng_vocab, french_vocab, w2v_vectors
         first_french_word_index = french_vocab.index(first_french_word)
         # get predicted french words for all english words
         predictions = translation_model.predict(english_vectors_tensor)
+        predictions = predictions.to(device)
         translated_word = None
         max_pred_score = -1
         # cycle through all predictions
@@ -130,9 +142,11 @@ def test_translation(eng_test, french_test, eng_vocab, french_vocab, w2v_vectors
 
             bigram = np.hstack((w2v_vectors[first_word], w2v_vectors[second_word]))
             #bigram = torch.Tensor([bigram])
-            bigram = make_tensor([bigram], unit)
+            bigram = make_tensor([bigram])
+            bigram = bigram.to(device)
             
             next_word_pred = trigram_model.predict(bigram)
+            next_word_pred = next_word_pred.to(device)
             
             top_50_prediction_indices = get_top_n_predictions(next_word_pred, n=50)
 
@@ -145,9 +159,12 @@ def test_translation(eng_test, french_test, eng_vocab, french_vocab, w2v_vectors
             top_50_eng_words = [eng_vocab[i] for i in top_50_prediction_indices]
             top_50_eng_vectors = [w2v_vectors[w] for w in top_50_eng_words]
             #top_50_eng_vectors_tensor = torch.Tensor(top_50_eng_vectors)
-            top_50_eng_vectors_tensor = make_tensor(top_50_eng_vectors, unit)
+            top_50_eng_vectors_tensor = make_tensor(top_50_eng_vectors)
+            top_50_eng_vectors_tensor = top_50_eng_vectors_tensor.to(device)
+
 
             translated_predictions = translation_model.predict(top_50_eng_vectors_tensor)
+            translated_predictions = translated_predictions.to(device)
             for i, pred in enumerate(translated_predictions):
                 score = get_score_for_word(pred, next_french_word_index)
                 if score > max_pred_score:
@@ -184,6 +201,6 @@ def test_translation(eng_test, french_test, eng_vocab, french_vocab, w2v_vectors
             first_word = second_word
             second_word = translated_word
 
-        print("Translated sentence: {}".format(translated_english_words))
+        #print("Translated sentence: {}".format(translated_english_words))
 
     print(classification_report(actual_translations, predicted_translations))
