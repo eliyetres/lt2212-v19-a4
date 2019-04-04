@@ -4,11 +4,12 @@ import torch
 import operator
 import numpy as np
 from trigrams import create_ngram
-from sklearn.metrics import classification_report
+from sklearn.metrics import classification_report, f1_score, accuracy_score
 from config import process_unit
 
 if process_unit == "gpu":
     device = "cuda:0"
+    torch.set_default_tensor_type('torch.cuda.FloatTensor')
 else:
     device = "cpu"
 
@@ -58,7 +59,6 @@ def get_top_n_predictions(next_word_pred, n=50):
     
     for i in range(0, n):
         # index = next_word_pred.index( sorted_preds[i] )
-
         index = indices[0][i]
         top_n_indices.append(index)
 
@@ -82,7 +82,7 @@ def test_translation(eng_test, french_test, eng_vocab, french_vocab, w2v_vectors
     predicted_translations = []
     
     # create trigrams out of eng test data# create trigrams out of eng test data
-    #eng_trigrams = create_ngram(eng_test)
+    eng_trigrams = create_ngram(eng_test)
     
     # create a list of w2v vectors of all english words in vocab
     english_vectors = []
