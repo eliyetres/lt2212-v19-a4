@@ -47,12 +47,12 @@ class NeuralNetwork():
         self.learning_rate = lr
         self.batch_size = 300
         if device == "gpu":
+            torch.set_default_tensor_type('torch.cuda.FloatTensor')
             self.device = torch.device("cuda:0")
             print("Using GPU")              
         else: 
             self.device = torch.device("cpu")  
             print("Using CPU")
-        torch.set_default_tensor_type('torch.cuda.FloatTensor')
     
     def forward(self, X):
         # d = self.weights_1.dot(x)
@@ -205,6 +205,7 @@ class NeuralNetwork():
         else:
         # Using CPU (slow)                                                                                                                                                    
             X = torch.Tensor(X_list)
-            Y = torch.Tensor(Y_list)
+            # Y = torch.Tensor(Y_list)
+            Y = torch.Tensor([a.toarray()[0] for a in Y_list])
 
         return X, Y

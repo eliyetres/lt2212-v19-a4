@@ -31,12 +31,12 @@ def generate_trigram_model(eng_train, w2v_vectors, one_hot_encoded_vectors_eng):
         #Y = torch.Tensor(Y_list) 
         #trigram_eng_model = NeuralNetwork("cpu", lr=0.01)
     
-    trigram_eng_model = NeuralNetwork(lr=0.01)
+    trigram_eng_model = NeuralNetwork(lr=0.01, device=config.process_unit)
 
     # The training for trigram model is done here
     #trigram_eng_model.train(X, Y, 600, len(Y[0]), 20)
     tstart = time.time()
-    trigram_eng_model.train(X_list, Y_list, 600, len(Y_list[0]), 300)
+    trigram_eng_model.train(X_list, Y_list, 600, len(Y_list))
     tstop = time.time()
     h, m, s = convert_time(tstart, tstop)
     print("Total run time for trigram model: {}:{}:{} ".format(h, m, s))
@@ -58,12 +58,12 @@ def generate_translation_model(eng_train, french_train, w2v_vectors, one_hot_enc
         #Y = torch.Tensor(Y_list) 
         #translation_model = NeuralNetwork("cpu", lr=0.01)
 
-    translation_model = NeuralNetwork(lr=0.01)
+    translation_model = NeuralNetwork(lr=0.01, device=config.process_unit)
 
     # The training for translation model is done here
     #translation_model.train(X, Y, 600, len(Y[0]), 20)
     tstart = time.time()
-    translation_model.train(X_list, Y_list, 600, len(Y_list[0]), 300 )
+    translation_model.train(X_list, Y_list, 600, len(Y_list))
     tstop = time.time()
     h, m, s = convert_time(tstart, tstop)
     print("Total run time for translation model: {}:{}:{} ".format(h, m, s))

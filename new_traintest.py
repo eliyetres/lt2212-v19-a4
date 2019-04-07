@@ -156,7 +156,10 @@ def test_translation(eng_test, french_test, eng_vocab, french_vocab, w2v_vectors
             max_pred_score = -1
             translated_word = None
 
-            top_50_eng_words = [eng_vocab[i] for i in top_50_prediction_indices]
+            for i in top_50_prediction_indices:
+                print(i)
+                print(eng_vocab[i])
+            # top_50_eng_words = [eng_vocab[i] for i in top_50_prediction_indices]
             top_50_eng_vectors = [w2v_vectors[w] for w in top_50_eng_words]
             #top_50_eng_vectors_tensor = torch.Tensor(top_50_eng_vectors)
             top_50_eng_vectors_tensor = make_tensor(top_50_eng_vectors)

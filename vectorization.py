@@ -54,7 +54,7 @@ def generate_one_hot_encoded_vectors(ls_words):
     # one_hot_encodings = encoder.fit_transform(ls_words)
     dv = DictVectorizer()
     dvX = dv.fit_transform( [ {'word': a} for a in ls_words ] )
-    dvX = dvX.toarray()
+    # dvX = dvX.toarray()
     one_hot_encodings = {}
     for index in range(len(ls_words)):
         one_hot_encodings[ls_words[index]] = dvX[index]
