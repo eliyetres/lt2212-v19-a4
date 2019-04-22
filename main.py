@@ -28,44 +28,6 @@ from new_traintest import *
 #         #Y = torch.Tensor(Y_list) 
 #         trigram_eng_model = NeuralNetwork("cpu", lr=0.01)
     
-<<<<<<< HEAD
-    trigram_eng_model = NeuralNetwork(lr=0.01, device=config.process_unit)
-
-    # The training for trigram model is done here
-    #trigram_eng_model.train(X, Y, 600, len(Y[0]), 20)
-    tstart = time.time()
-    trigram_eng_model.train(X_list, Y_list, 600, len(Y_list))
-    tstop = time.time()
-    h, m, s = convert_time(tstart, tstop)
-    print("Total run time for trigram model: {}:{}:{} ".format(h, m, s))
-    return trigram_eng_model
-
-
-def generate_translation_model(eng_train, french_train, w2v_vectors, one_hot_encoded_vectors_french):
-    X_list, Y_list = make_translation_vectors(eng_train, french_train, w2v_vectors, one_hot_encoded_vectors_french)
-
-    #if config.process_unit == "gpu":
-        # Using GPU (fast)
-        #X = torch.cuda.FloatTensor(X_list) # gpu variable must have input type FloatTensor
-        #Y = torch.cuda.FloatTensor(Y_list) 
-        #translation_model = NeuralNetwork("gpu", lr=0.01)
-        
-    #else: 
-        # Using CPU (slow)
-        #X = torch.Tensor(X_list) 
-        #Y = torch.Tensor(Y_list) 
-        #translation_model = NeuralNetwork("cpu", lr=0.01)
-
-    translation_model = NeuralNetwork(lr=0.01, device=config.process_unit)
-
-    # The training for translation model is done here
-    #translation_model.train(X, Y, 600, len(Y[0]), 20)
-    tstart = time.time()
-    translation_model.train(X_list, Y_list, 600, len(Y_list))
-    tstop = time.time()
-    h, m, s = convert_time(tstart, tstop)
-    print("Total run time for translation model: {}:{}:{} ".format(h, m, s))
-=======
 #     # The training for trigram model is done here
 #     #trigram_eng_model.train(X, Y, 600, len(Y[0]), 20)
 #     trigram_eng_model.train(X_list, Y_list, 600, len(Y_list[0]), 20)
@@ -86,7 +48,6 @@ def generate_translation_model(eng_train, french_train, w2v_vectors, one_hot_enc
 #         #X = torch.Tensor(X_list) 
 #         #Y = torch.Tensor(Y_list) 
 #         translation_model = NeuralNetwork("cpu", lr=0.01)
->>>>>>> encoding
 
 #     # The training for translation model is done here
 #     #translation_model.train(X, Y, 600, len(Y[0]), 20)
@@ -135,29 +96,41 @@ if __name__ == '__main__':
     # create trigrams
     print("Generating trigrams for English training data...")
     english_sentence_word_trigrams = create_ngram(eng_train)
+
+    b = config.batch_size
     
     # ######## TRIGRAM MODEL ########
     # X_Y = generate_trigram_vector(english_sentence_word_trigrams, w2v_vectors, eng_indices, eng_len)
     # X, Y = split_data_features_labels(X_Y)
-    X, Y = gen_tri_vec_split(english_sentence_word_trigrams, w2v_vectors, eng_indices, eng_len)
-
+    
     print("Training trigram model...")
     trigram_eng_model = NeuralNetwork(config.process_unit, lr=0.01)
-    trigram_eng_model.train(X, Y, 600, len(Y[0]), 20)
+    # Initiate network weights
+    
+    init_sample = random.sample(english_sentence_word_trigrams, b)    
+    X, Y = gen_tri_vec_split(init_sample, w2v_vectors, eng_indices, eng_len)   
+    # Train translation model
+    trigram_eng_model.start(X, Y, 600, len(Y[0]))
+    for i in range(0, len(english_sentence_word_trigrams), b):  
+        X, Y = gen_tri_vec_split(english_sentence_word_trigrams[i:i+b], w2v_vectors, eng_indices, eng_len)        
+        trigram_eng_model.train(X, Y, 100)
 
-    # ######## TRANSLATION MODEL ########
-    X_list, Y_list = generate_translation_vectors(eng_train, french_train, w2v_vectors, fr_indices, fr_len)
+    # ######## TRANSLATION MODEL ########     
+    #trigram_model = generate_trigram_model(eng_train, w2v_vectors, one_hot_encoded_vectors_eng)    
+    #print("Training translation model...")
+    #translation_model = generate_translation_model(eng_train, french_train, w2v_vectors, one_hot_encoded_vectors_french)   
 
     print("Training translation model...")
     translation_model = NeuralNetwork(config.process_unit, lr=0.01)
-    translation_model.train(X_list, Y_list, 600, len(Y_list[0]), 20)  
-
-
-    #print("Training trigram model...")
-    #trigram_model = generate_trigram_model(eng_train, w2v_vectors, one_hot_encoded_vectors_eng)
-    
-    #print("Training translation model...")
-    #translation_model = generate_translation_model(eng_train, french_train, w2v_vectors, one_hot_encoded_vectors_french)
+    # Initiate network weights
+    l = len(eng_train)    
+    i_slice = random.randint(0,(l-b))    
+    X_list, Y_list = generate_translation_vectors(eng_train[i_slice:i_slice+l], french_train[i_slice:i_slice+l], w2v_vectors, fr_indices, l)
+    translation_model.start(X_list, Y_list, 600, len(Y_list[0]))  
+    # Train translation model
+    for i in range(0, len(eng_train), b):  
+        X_list, Y_list = generate_translation_vectors(eng_train[i:i+b], french_train[i:i+b], w2v_vectors, fr_indices, l)
+        translation_model.train(X_list, Y_list, 80)  
     
     
     # import joblib

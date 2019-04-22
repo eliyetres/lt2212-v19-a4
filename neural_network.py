@@ -79,7 +79,8 @@ class NeuralNetwork():
         #self.output = torch.log_softmax(d + self.bias_3, dim=1)
 
         
-    def train(self, X, Y, hidden_size, num_classes, n_epochs=20):
+    #def train(self, X, Y, hidden_size, num_classes, n_epochs=20):
+    def start(self, X, Y, hidden_size, num_classes):
         print(self.device)
         input_feature_size = len(X[0])        
         #self.weights_1 = torch.zeros((input_feature_size, hidden_size), requires_grad=True)
@@ -117,42 +118,45 @@ class NeuralNetwork():
 
         # initialize the optimizer
         #optimizer = torch.optim.Adam([self.weights_1, self.bias_1, self.weights_2, self.bias_2], lr=self.learning_rate)
-        optimizer = torch.optim.Adam([self.weights_1, self.bias_1, self.weights_2, self.bias_2], lr=self.learning_rate)
+        self.optimizer = torch.optim.Adam([self.weights_1, self.bias_1, self.weights_2, self.bias_2], lr=self.learning_rate)
         
         #criterion = CrossEntropyLoss()
 
         print(type(Y))
-        X_Y_zipped = list(zip(X, Y))
-
+        #X_Y_zipped = list(zip(X, Y))
+    def train(self, X_batch, Y_batch, n_epochs=20):
         for epoch in range(n_epochs):
             print("Starting epoch {}".format(epoch))               
             
-            np.random.shuffle(X_Y_zipped)
-            X, Y = zip(*X_Y_zipped)
-            X_sample = X[:self.batch_size]
-            Y_sample = Y[:self.batch_size]
-            X_in, Y_in = self.make_tensor(X_sample, Y_sample)
-            X_in = X_in.to(self.device)
-            Y_in = Y_in.to(self.device)
+            #np.random.shuffle(X_Y_zipped)
+            #X, Y = zip(*X_Y_zipped)
+            #X_sample = X[:self.batch_size]
+            #Y_sample = Y[:self.batch_size]
+            #X_in, Y_in = self.make_tensor(X_sample, Y_sample)
+            #X_in = X_in.to(self.device)
+            #Y_in = Y_in.to(self.device)
 
+            X_batch, Y_batch = self.make_tensor(X_batch, Y_batch)
+            X_batch = X_batch.to(self.device)
+            Y_batch = Y_batch.to(self.device)
 
             # do the forward pass
-            self.forward(X_in)
+            self.forward(X_batch)
 
             # set the gradients to 0 before backpropagation
-            optimizer.zero_grad()
+            self.optimizer.zero_grad()
 
             #Computing loss by built-in function - not used
             #loss = criterion(self.output, torch.max(Y, 1)[1])
 
             # Compute loss by own function - used
-            loss = self.cross_entropy_cat(self.output, torch.max(Y_in, 1)[1])
+            loss = self.cross_entropy_cat(self.output, torch.max(Y_batch, 1)[1])
 
             # compute gradients
             loss.backward()
 
             # update weights
-            optimizer.step()
+            self.optimizer.step()
             torch.cuda.empty_cache()
             print('Epoch [{}/{}], Loss: {:.4f}'.format(epoch+1, n_epochs, loss.item()))
         
@@ -207,7 +211,7 @@ class NeuralNetwork():
         else:
         # Using CPU (slow)                                                                                                                                                    
             X = torch.Tensor(X_list)
-            # Y = torch.Tensor(Y_list)
-            Y = torch.Tensor([a.toarray()[0] for a in Y_list])
+            Y = torch.Tensor(Y_list)
+            # Y = torch.Tensor([a.toarray()[0] for a in Y_list])
 
         return X, Y
