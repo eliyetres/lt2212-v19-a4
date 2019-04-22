@@ -2,12 +2,85 @@
 from sklearn.feature_extraction import DictVectorizer
 
 import warnings # Stackoverflow said to do this if you use Windows
+warnings.filterwarnings(action='ignore', category=UserWarning, module='gensim')
 from gensim.models.keyedvectors import KeyedVectors
 from trigrams import create_ngram
 import numpy as np
 
-warnings.filterwarnings(action='ignore', category=UserWarning, module='gensim')
 
+def generate_one_hot(indices, vocab_len, word):
+    one_hot_vector = np.zeros(vocab_len, dtype=np.float32)
+    ind = indices[word]
+    one_hot_vector[ind] = 1
+
+    return one_hot_vector
+
+
+def generate_indices(vocabulary):
+    """ Returns words and their indices and the length of the vocab to be used for one-hot vectors """ 
+    indices = {}
+    for en, word in enumerate(vocabulary):
+        indices[word] = en
+
+    return indices, len(vocabulary)
+
+def generate_trigram_vector(trigram_sentences, w2v_vectors, indices, vocab_len):
+    sentence_vector_trigrams = []
+
+    for sentence in trigram_sentences:
+        trigram_vectors = []
+        for trigram in sentence:
+            tg_vector = []
+            
+            for index, word in enumerate(trigram):
+                if index < 2:
+                    tg_vector.append(w2v_vectors[word])
+                else:                  
+                    tg_vector.append(generate_one_hot(indices, vocab_len, word))
+            trigram_vectors.append(tg_vector)
+        sentence_vector_trigrams.append(trigram_vectors)
+
+    return sentence_vector_trigrams
+
+def gen_tri_vec_split(trigram_sentences, w2v_vectors, indices, vocab_len):
+    X = []
+    Y = []
+
+    for sentence in trigram_sentences:
+        for trigram in sentence:
+            tg_vector = []
+            
+            for index, word in enumerate(trigram):
+                if index < 2:
+                    tg_vector.append(w2v_vectors[word])
+                else:                  
+                    tg_vector.append(generate_one_hot(indices, vocab_len, word))
+            X.append(np.hstack((tg_vector[0], tg_vector[1])))
+            Y.append(tg_vector[-1])
+    return X, Y
+
+def generate_translation_vectors(eng_sents, french_sents, w2v_vectors, indices, vocab_len):
+    X = []
+    Y = []
+    for sent_index in range(len(eng_sents)):
+        # get the english and french sentences
+        eng_sent = eng_sents[sent_index]
+        french_sent = french_sents[sent_index]
+        for w_index in range(len(eng_sent)):
+            # get the english and french word
+            eng_word = eng_sent[w_index]
+            french_word = french_sent[w_index]
+            # get the english (w2v) and french (one hot) word vectors
+            eng_word_vector = w2v_vectors[eng_word]
+
+            #french_word_vector = one_hot_encoded_vectors_french[french_word]
+            french_word_vector = generate_one_hot(indices, vocab_len, french_word)
+
+            # english word vector is input, french word vector is output
+            X.append(eng_word_vector)
+            Y.append(french_word_vector)
+           
+    return X, Y
 
 def get_vocabulary(ls_text):
     vocabulary = []

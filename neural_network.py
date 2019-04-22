@@ -48,11 +48,12 @@ class NeuralNetwork():
         self.batch_size = 300
         if device == "gpu":
             self.device = torch.device("cuda:0")
+            torch.set_default_tensor_type('torch.cuda.FloatTensor')
             print("Using GPU")              
         else: 
             self.device = torch.device("cpu")  
             print("Using CPU")
-        torch.set_default_tensor_type('torch.cuda.FloatTensor')
+        
     
     def forward(self, X):
         # d = self.weights_1.dot(x)
