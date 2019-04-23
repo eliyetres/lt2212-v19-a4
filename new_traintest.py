@@ -192,7 +192,7 @@ def test_translation(eng_test, french_test, eng_vocab, french_vocab, w2v_vectors
     print(classification_report(actual_translations, predicted_translations))
 
 
-def test_new(eng_test, french_test, eng_vocab, french_vocab,w2v_vectors,eng_indices, fr_eng_indices, len_eng, len_fr, trigram_model, translation_model, unit):
+def test_new(eng_test, french_test, eng_vocab, french_vocab,w2v_vectors,eng_indices, fr_eng_indices, len_eng, len_fr, trigram_model, translation_model, unit, top_n):
     
     # Output variables
     # Measurements should be accuracy, precision, recall and F1_score
@@ -248,7 +248,7 @@ def test_new(eng_test, french_test, eng_vocab, french_vocab,w2v_vectors,eng_indi
             bigram = np.hstack((w2v_vectors[first_word], w2v_vectors[second_word]))
             bigram = make_tensor([bigram], unit)            
             next_word_pred = trigram_model.predict(bigram)            
-            top_50_prediction_indices = get_top_n_predictions(next_word_pred, n=50)
+            top_50_prediction_indices = get_top_n_predictions(next_word_pred, top_n)
             next_french_word = french_test[index][word_index]
             next_french_word_index = french_vocab.index(next_french_word)
             

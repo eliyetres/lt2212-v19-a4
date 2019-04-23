@@ -43,11 +43,9 @@ import numpy as np
 
 
 class NeuralNetwork():
-    def __init__(self, device, lr=0.01, batch_size=100):
+    def __init__(self, device, lr=0.01):
         self.learning_rate = lr
-        self.batch_size = 300
         if device == "gpu":
-            torch.set_default_tensor_type('torch.cuda.FloatTensor')
             self.device = torch.device("cuda:0")
             torch.set_default_tensor_type('torch.cuda.FloatTensor')
             print("Using GPU")              

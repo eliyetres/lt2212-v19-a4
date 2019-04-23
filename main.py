@@ -144,4 +144,4 @@ if __name__ == '__main__':
     
     #test_translation(eng_test, french_test, eng_vocabulary, french_vocabulary, w2v_vectors, one_hot_encoded_vectors_eng, one_hot_encoded_vectors_french, trigram_model, translation_model, config.process_unit)
 
-    test_new(eng_test, french_test, eng_vocabulary, french_vocabulary, w2v_vectors, eng_indices, fr_indices, eng_len, fr_len, trigram_eng_model, translation_model, config.process_unit)
+    test_new(eng_test, french_test, eng_vocabulary, french_vocabulary, w2v_vectors, eng_indices, fr_indices, eng_len, fr_len, trigram_eng_model, translation_model, config.process_unit, 50)
