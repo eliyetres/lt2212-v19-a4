@@ -8,8 +8,8 @@ from trigrams import create_ngram
 import numpy as np
 
 
-def generate_one_hot(indices, vocab_len, word):
-    one_hot_vector = np.zeros(vocab_len, dtype=np.float32)
+def generate_one_hot(indices, word):
+    one_hot_vector = np.zeros(len(indices), dtype=np.float32)
     ind = indices[word]
     one_hot_vector[ind] = 1
 
@@ -22,9 +22,9 @@ def generate_indices(vocabulary):
     for en, word in enumerate(vocabulary):
         indices[word] = en
 
-    return indices, len(vocabulary)
+    return indices
 
-def generate_trigram_vector(trigram_sentences, w2v_vectors, indices, vocab_len):
+def generate_trigram_vector(trigram_sentences, w2v_vectors, indices):
     sentence_vector_trigrams = []
 
     for sentence in trigram_sentences:
@@ -36,13 +36,13 @@ def generate_trigram_vector(trigram_sentences, w2v_vectors, indices, vocab_len):
                 if index < 2:
                     tg_vector.append(w2v_vectors[word])
                 else:                  
-                    tg_vector.append(generate_one_hot(indices, vocab_len, word))
+                    tg_vector.append(generate_one_hot(indices, word))
             trigram_vectors.append(tg_vector)
         sentence_vector_trigrams.append(trigram_vectors)
 
     return sentence_vector_trigrams
 
-def gen_tri_vec_split(trigram_sentences, w2v_vectors, indices, vocab_len):
+def gen_tri_vec_split(trigram_sentences, w2v_vectors, indices):
     X = []
     Y = []
 
@@ -54,12 +54,12 @@ def gen_tri_vec_split(trigram_sentences, w2v_vectors, indices, vocab_len):
                 if index < 2:
                     tg_vector.append(w2v_vectors[word])
                 else:                  
-                    tg_vector.append(generate_one_hot(indices, vocab_len, word))
+                    tg_vector.append(generate_one_hot(indices, word))
             X.append(np.hstack((tg_vector[0], tg_vector[1])))
             Y.append(tg_vector[-1])
     return X, Y
 
-def generate_translation_vectors(eng_sents, french_sents, w2v_vectors, indices, vocab_len):
+def generate_translation_vectors(eng_sents, french_sents, w2v_vectors, indices):
     X = []
     Y = []
     for sent_index in range(len(eng_sents)):
@@ -74,7 +74,7 @@ def generate_translation_vectors(eng_sents, french_sents, w2v_vectors, indices, 
             eng_word_vector = w2v_vectors[eng_word]
 
             #french_word_vector = one_hot_encoded_vectors_french[french_word]
-            french_word_vector = generate_one_hot(indices, vocab_len, french_word)
+            french_word_vector = generate_one_hot(indices, french_word)
 
             # english word vector is input, french word vector is output
             X.append(eng_word_vector)

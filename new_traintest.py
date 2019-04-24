@@ -1,5 +1,5 @@
 #Training and testing script
-from neural_network import *
+from neural_network import NeuralNetwork
 import torch
 import operator
 import numpy as np
@@ -41,12 +41,12 @@ def get_top_n_predictions(next_word_pred, n=50):
 
     # next_word_pred is a Tensor
     # use sorting method of torch, returning indices
-    sorted_preds, indices = torch.sort(next_word_pred, descending=True)
+    _, indices = torch.sort(next_word_pred, descending=True)
 
     top_n_indices = []
     
     for i in range(0, n):
-        # index = next_word_pred.index( sorted_preds[i] )
+        # index = next_word_pred.index( _[i] )
 
         index = indices[0][i]
         top_n_indices.append(index)
@@ -192,7 +192,7 @@ def test_translation(eng_test, french_test, eng_vocab, french_vocab, w2v_vectors
     print(classification_report(actual_translations, predicted_translations))
 
 
-def test_new(eng_test, french_test, eng_vocab, french_vocab,w2v_vectors,eng_indices, fr_eng_indices, len_eng, len_fr, trigram_model, translation_model, unit, top_n):
+def test_new(eng_test, french_test, eng_vocab, french_vocab,w2v_vectors,eng_indices, fr_eng_indices, trigram_model, translation_model, unit, top_n):
     
     # Output variables
     # Measurements should be accuracy, precision, recall and F1_score
