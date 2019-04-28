@@ -14,10 +14,10 @@ from neural_network import NeuralNetwork
 
 parser = argparse.ArgumentParser(description="Feed forward neural networks.")
 
-parser.add_argument("targetfile", type=str, default="UN-english.txt", nargs='?', help="File used as target language.")
-parser.add_argument("sourcefile", type=str, default="UN-french.txt", nargs='?', help="File used as source language..")
+parser.add_argument("targetfile", type=str, default="UN-english-sample-small.txt", nargs='?', help="File used as target language.")
+parser.add_argument("sourcefile", type=str, default="UN-french-sample-small.txt", nargs='?', help="File used as source language..")
 parser.add_argument("modelfile", type=str, default="GoogleNews-vectors-negative300.bin", nargs='?', help="Pre-trained word2vec 300-dimensional vectors.")
-parser.add_argument("trainedmodelfile", type=str, default="trained_language_model", nargs='?', help="Trained language model")
+parser.add_argument("trainedmodelfile", type=str, default="trained_language_model.pickle", nargs='?', help="Trained language model")
 
 #parser.add_argument("-M", "--model", metavar="M", dest="model", type=str, default="", help="Trained language model (default empty string)")
 parser.add_argument("-B", "--batch", metavar="B", dest="batch", type=int,default=100, help="Batch size used for for training the neural network (default 100).")
@@ -49,7 +49,7 @@ pre_trained_model = load_gensim_model(args.modelfile)
 print("Removing words not found in the model.")
 target_data, source_data = remove_words(target, source, pre_trained_model)
 
-print("Splitting data into training and testing sets, {}/{}.".format((test_size*100), (100-(test_size*100))))
+print("Splitting data into training and testing sets, {}/{}.".format(round(100-(test_size*100)), round(test_size*100)))
 target_train, target_test, source_train, source_test = split_data(target_data, source_data, test_size)
 
 if b >= len(target_train):
