@@ -14,10 +14,10 @@ from neural_network import NeuralNetwork
 
 parser = argparse.ArgumentParser(description="Feed forward neural networks.")
 
-parser.add_argument("targetfile", type=str, default="UN-english", help="File used as target language.")
-parser.add_argument("sourcefile", type=str, default="UN-french", help="File used as source language..")
-parser.add_argument("modelfile", type=str, default="GoogleNews-vectors-negative300.bin", help="Pre-trained word2vec 300-dimensional vectors.")
-parser.add_argument("trainedmodelfile", type=str, default="trained_language_model", help="Trained language model")
+parser.add_argument("targetfile", type=str, default="UN-english.txt", nargs='?', help="File used as target language.")
+parser.add_argument("sourcefile", type=str, default="UN-french.txt", nargs='?', help="File used as source language..")
+parser.add_argument("modelfile", type=str, default="GoogleNews-vectors-negative300.bin", nargs='?', help="Pre-trained word2vec 300-dimensional vectors.")
+parser.add_argument("trainedmodelfile", type=str, default="trained_language_model", nargs='?', help="Trained language model")
 
 #parser.add_argument("-M", "--model", metavar="M", dest="model", type=str, default="", help="Trained language model (default empty string)")
 parser.add_argument("-B", "--batch", metavar="B", dest="batch", type=int,default=100, help="Batch size used for for training the neural network (default 100).")
@@ -72,7 +72,7 @@ print("Feeding training data in batches of size: {}".format(b))
 print("Training language model.")
 
 #If no model is incoming, create one:
-if os.path.getsize(args.trainedmodelfile) <= 0:
+if os.path.exists(args.trainedmodelfile) and os.path.getsize(args.trainedmodelfile) <= 0:
 
     print("Initiating an empty model")
     trigram_target_model = NeuralNetwork(p, r)

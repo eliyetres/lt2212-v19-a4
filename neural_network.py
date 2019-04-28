@@ -45,13 +45,17 @@ import numpy as np
 class NeuralNetwork():
     def __init__(self, device, lr=0.01):
         self.learning_rate = lr
-        if device == "gpu":
+        self.device = torch.device(device)
+        #if self.device != "cpu":
+            #torch.set_default_tensor_type('torch.cuda.FloatTensor')
+
+        ''' if device == "gpu":
             self.device = torch.device("cuda:0")
             torch.set_default_tensor_type('torch.cuda.FloatTensor')
             print("Using GPU")              
         else: 
             self.device = torch.device("cpu")  
-            print("Using CPU")
+            print("Using CPU") '''
         
     
     def forward(self, X):
@@ -79,7 +83,7 @@ class NeuralNetwork():
         
     #def train(self, X, Y, hidden_size, num_classes, n_epochs=20):
     def start(self, X, Y, hidden_size, num_classes):
-        print(self.device)
+        #print(self.device)
         input_feature_size = len(X[0])        
         #self.weights_1 = torch.zeros((input_feature_size, hidden_size), requires_grad=True)
         #self.weights_2 = torch.zeros((hidden_size, hidden_size), requires_grad=True)
@@ -202,14 +206,14 @@ class NeuralNetwork():
     
     def make_tensor(self, X_list, Y_list):                                                                                                                                                  
 
-        if self.device == "cuda:0":
+        if self.device == "cpu":
+            # Using CPU (slow)  
+            X = torch.Tensor(X_list)
+            Y = torch.Tensor(Y_list)
+            
+        else:
             # Using GPU (fast)                                                                                                                                                      
             X = torch.as_tensor(X_list, dtype=torch.float, device=self.device)
             Y = torch.as_tensor(Y_list, dtype=torch.float, device=self.device)
-        else:
-        # Using CPU (slow)                                                                                                                                                    
-            X = torch.Tensor(X_list)
-            Y = torch.Tensor(Y_list)
-            # Y = torch.Tensor([a.toarray()[0] for a in Y_list])
 
         return X, Y

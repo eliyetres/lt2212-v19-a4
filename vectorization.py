@@ -42,6 +42,15 @@ def generate_trigram_vector(trigram_sentences, w2v_vectors, indices):
 
     return sentence_vector_trigrams
 
+def generate_w2v_vector(model, word):
+    if word == '<start>':
+        vector = np.random.rand(1,300)[0]
+    else:
+        vector = w2v_model.word_vec(word)
+            
+    return vector
+
+
 def gen_tri_vec_split(trigram_sentences, w2v_vectors, indices):
     X = []
     Y = []
@@ -151,6 +160,8 @@ def get_w2v_vectors(w2v_model, ls_words):
                 vec = np.random.rand(1,300)[0]
                 w2v_vectors[word] = vec
     return w2v_vectors
+
+
 
 
 def make_vector_trigrams(sentences, w2v_vectors, one_hot_vectors):
