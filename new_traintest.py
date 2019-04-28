@@ -9,13 +9,13 @@ from sklearn.metrics import classification_report
 
 def make_tensor(vector_list, unit):
 
-    if unit == "gpu":
-        # Using GPU (fast)                                                                                                                                                          
-        X = torch.cuda.FloatTensor(vector_list) # gpu variable must have input type FloatTensor                                                                                           
-    else:
+    if unit == "cpu":
         # Using CPU (slow)                                                                                                                                                          
         X = torch.Tensor(vector_list)
-
+              
+    else:
+        # Using GPU (fast)                                                                                                                                                          
+        X = torch.cuda.FloatTensor(vector_list) # gpu variable must have input type FloatTensor                                                                                            
     return X
 
 
@@ -89,9 +89,9 @@ def test_translation(eng_test, french_test, eng_vocab, french_vocab, w2v_vectors
         # french_test[index] = ["l'atelier", 'aura', 'lieu', 'aux', 'dates', 'ci-après', 'lundi', 'novembre', 'de', 'à', 'heures', 'et', 'de', 'heures', 'novembre', 'de', 'heures', 'mercredi', 'novembre', 'de', 'à']
         # eng_test[index] = ['the', 'workshop', 'will', 'be', 'held', 'on', 'the', 'following', 'dates', 'monday', 'november', 'from', 'am', 'pm', 'from', 'pm', 'pm', 'tuesday', 'november', 'from', 'pm']
 
-        print("Sentence {}".format(index))
-        print("French sentence: {}".format(french_test[index]))
-        print("English sentence: {}".format(eng_test[index]))
+        print("Sentence {} / {}".format(index, len(french_test)))
+        #print("French sentence: {}".format(french_test[index]))
+        #print("English sentence: {}".format(eng_test[index]))
 
         translated_english_words = []
 
@@ -187,7 +187,7 @@ def test_translation(eng_test, french_test, eng_vocab, french_vocab, w2v_vectors
             first_word = second_word
             second_word = translated_word
 
-        print("Translated sentence: {}".format(translated_english_words))
+        #print("Translated sentence: {}".format(translated_english_words))
 
     print(classification_report(actual_translations, predicted_translations))
 
@@ -211,9 +211,9 @@ def test_new(eng_test, french_test, eng_vocab, french_vocab,w2v_vectors,eng_indi
         if len(french_test[index]) == 0:
             continue
 
-        print("Sentence {}".format(index))
-        print("French sentence: {}".format(french_test[index]))
-        print("English sentence: {}".format(eng_test[index]))
+        print("Sentence {} / {}".format(index, len(french_test)))
+        #print("French sentence: {}".format(french_test[index]))
+        #print("English sentence: {}".format(eng_test[index]))
 
         translated_english_words = []
 
@@ -274,6 +274,6 @@ def test_new(eng_test, french_test, eng_vocab, french_vocab,w2v_vectors,eng_indi
             first_word = second_word
             second_word = translated_word
 
-        print("Translated sentence: {}".format(translated_english_words))
+        #print("Translated sentence: {}".format(translated_english_words))
 
     print(classification_report(actual_translations, predicted_translations))
