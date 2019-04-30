@@ -13,6 +13,7 @@ from new_traintest import test_new
 from vectorization import load_gensim_model, remove_words, get_vocabulary, generate_indices, gen_tri_vec_split, get_w2v_vectors, generate_translation_vectors
 from neural_network import NeuralNetwork
 
+
 parser = argparse.ArgumentParser(description="Feed forward neural networks.")
 
 parser.add_argument("targetfile", type=str, default="UN-english", help="File used as target language.")
@@ -84,8 +85,6 @@ if not os.path.isfile(args.trainedmodelfile) or os.path.getsize(args.trainedmode
 
     X_list, Y_list = generate_translation_vectors(target_train[start_i:end_i], source_train[start_i:end_i], vectors, source_indices)
     translation_model.start(X_list, Y_list, layer_size, len(Y_list[0]))
-
-    
 else:
     print("File found")
     with open(args.trainedmodelfile, 'rb') as mf:

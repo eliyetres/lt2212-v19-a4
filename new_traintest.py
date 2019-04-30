@@ -8,11 +8,9 @@ from sklearn.metrics import classification_report
 
 
 def make_tensor(vector_list, unit):
-
     if unit == "cpu":
         # Using CPU (slow)                                                                                                                                                          
         X = torch.Tensor(vector_list)
-              
     else:
         # Using GPU (fast)                                                                                                                                                          
         X = torch.cuda.FloatTensor(vector_list) # gpu variable must have input type FloatTensor                                                                                            
@@ -21,13 +19,12 @@ def make_tensor(vector_list, unit):
 
 def get_predicted_word(predictions, vocab):
     
-    #This code is correct, but the problem is that the size of predictions
-    #is larger than the size of vocab, therefore it keeps looping out of index
+    '''This code is correct, but the problem is that the size of predictions
+    is larger than the size of vocab, therefore it keeps looping out of index'''
 
     max_index, max_value = max(enumerate(predictions), key=operator.itemgetter(1))
 
     print("Max index {}, length of vocabulary, {}".format(max_index, len(vocab)))
-    #print("Max value: {}".format(max_value))
     return vocab[max_index]
 
 
@@ -54,16 +51,7 @@ def get_top_n_predictions(next_word_pred, n=50):
     return top_n_indices
 
 
-# for testing
-# create trigrams out of eng test data
-# for sentence in test data:
-#       get first french word
-#       create a list of w2v vectors of all english words in vocab
-#       feed this to translation model, get output
-#       choose the english word which gives this french word as output -> how to do this?
-#       Take <start> and this english word, feed to trigram model
-
-def test_translation(eng_test, french_test, eng_vocab, french_vocab, w2v_vectors, one_hot_eng, one_hot_french, trigram_model, translation_model, unit):
+def test_translation_old(eng_test, french_test, eng_vocab, french_vocab, w2v_vectors, one_hot_eng, one_hot_french, trigram_model, translation_model, unit):
 
     # Output variables
     # Measurements should be accuracy, precision, recall and F1_score
@@ -157,24 +145,6 @@ def test_translation(eng_test, french_test, eng_vocab, french_vocab, w2v_vectors
                     max_pred_score = score
                     translated_word = top_50_eng_words[i]
 
-            # for pred_index in top_50_prediction_indices:
-            #     eng_word = eng_vocab[pred_index]
-            #     eng_word_vector = w2v_vectors[eng_word]
-
-            #     # Append vector to the list
-            #     eng_word_vector = [eng_word_vector]
-
-            #     # Make it a tensor out of the list
-            #     vector_tensor = torch.Tensor(eng_word_vector)
-
-            #     translated_pred = translation_model.predict(vector_tensor)  # was eng_word_vector
-            #     translated_pred = translated_pred[0]
-                    
-            #     score = get_score_for_word(translated_pred, next_french_word_index)
-            #     if score > max_pred_score:
-            #         max_pred_score = score
-            #         translated_word = eng_word
-
             translated_english_words.append(translated_word)
             actual_translations.append(eng_test[index][word_index])
             predicted_translations.append(translated_word)
@@ -192,7 +162,7 @@ def test_translation(eng_test, french_test, eng_vocab, french_vocab, w2v_vectors
     print(classification_report(actual_translations, predicted_translations))
 
 
-def test_new(eng_test, french_test, eng_vocab, french_vocab,w2v_vectors,eng_indices, fr_eng_indices, trigram_model, translation_model, unit, top_n):
+def test_translation(eng_test, french_test, eng_vocab, french_vocab,w2v_vectors,eng_indices, fr_eng_indices, trigram_model, translation_model, unit, top_n):
     
     # Output variables
     # Measurements should be accuracy, precision, recall and F1_score

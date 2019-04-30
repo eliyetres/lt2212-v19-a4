@@ -1,5 +1,6 @@
 import torch
-# Used to 
+
+
 def verbose_cuda():    
     if torch.cuda.is_available():
         dev_no = torch.cuda.device_count()
@@ -12,6 +13,7 @@ def verbose_cuda():
             print('Allocated:', round(torch.cuda.memory_allocated(d)/1024**3,1), 'GB')
             print('Cached:   ', round(torch.cuda.memory_cached(d)/1024**3,1), 'GB')
             print("---------------")
+
 
 def convert_time(start, stop): 
     total_seconds = stop-start

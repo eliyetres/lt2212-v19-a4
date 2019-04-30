@@ -1,7 +1,5 @@
 #split_data.py
 
-from readfile import readfile
-
 import numpy as np
 from sklearn.model_selection import train_test_split
 
@@ -23,10 +21,3 @@ def split_data(target, source, size):
     print("Length of source test set: {}".format(len(sourceTest)))
 
     return targetTrain, targetTest, sourceTrain, sourceTest
-
-
-#Specifying test size in percentage
-# test_size = 0.2
-
-#Running split_data
-# split_data(target, source, test_size)

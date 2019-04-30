@@ -24,9 +24,5 @@ def readfile(eng_file, fre_file):
                 fre_words = fre_words[:shortest_sentence]
                 english_words.append(eng_words)
                 french_words.append(fre_words)
-                #print(eng_words)
-                #print(fre_words)
+                
     return english_words, french_words
-
-
-# readfile("../UN-english.txt", "../UN-french.txt")

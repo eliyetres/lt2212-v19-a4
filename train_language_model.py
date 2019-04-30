@@ -12,6 +12,7 @@ from trigrams import create_ngram, split_data_features_labels
 from vectorization import load_gensim_model, remove_words, get_vocabulary, generate_indices, gen_tri_vec_split, get_w2v_vectors, generate_translation_vectors
 from neural_network import NeuralNetwork
 
+
 parser = argparse.ArgumentParser(description="Feed forward neural networks.")
 
 parser.add_argument("targetfile", type=str, default="UN-english-sample-small.txt", nargs='?', help="File used as target language.")
@@ -73,7 +74,7 @@ print("Training language model.")
 if not os.path.isfile(args.trainedmodelfile) or os.path.getsize(args.trainedmodelfile) <=0:
 
     print("File not found")
-    print("Initiating an empty model")
+    print("Initializing an empty model")
     trigram_target_model = NeuralNetwork(p, r)
     startpoint = 0
 
@@ -95,13 +96,13 @@ else:
         
 print(startpoint)
     
-#For each batch...
+# For each batch...
 for i in range(startpoint, len(target_trigrams), b):
     print("Trigrams {} - {} out of {}".format(i, i+b, len(target_trigrams)))
     X, Y = gen_tri_vec_split(target_trigrams[i:i+b], vectors, target_indices)        
     trigram_target_model.train(X, Y, epochs)
 
-    #...write model to file
+    # ...write model to file
     print("Writing model to {}, having processed {} trigrams.".format(args.trainedmodelfile, i+b))
     with open(args.trainedmodelfile, 'wb') as tmf:
         pickle.dump([i+b, trigram_target_model], tmf)

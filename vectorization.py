@@ -1,11 +1,11 @@
 # this file contains helper functions for generating word vectors
 from sklearn.feature_extraction import DictVectorizer
 
-import warnings # Stackoverflow said to do this if you use Windows
-warnings.filterwarnings(action='ignore', category=UserWarning, module='gensim')
 from gensim.models.keyedvectors import KeyedVectors
 from trigrams import create_ngram
 import numpy as np
+import warnings
+warnings.filterwarnings(action='ignore', category=UserWarning, module='gensim')
 
 
 def generate_one_hot(indices, word):
@@ -24,6 +24,7 @@ def generate_indices(vocabulary):
 
     return indices
 
+
 def generate_trigram_vector(trigram_sentences, w2v_vectors, indices):
     sentence_vector_trigrams = []
 
@@ -41,6 +42,7 @@ def generate_trigram_vector(trigram_sentences, w2v_vectors, indices):
         sentence_vector_trigrams.append(trigram_vectors)
 
     return sentence_vector_trigrams
+
 
 def generate_w2v_vector(model, word):
     if word == '<start>':
@@ -68,6 +70,7 @@ def gen_tri_vec_split(trigram_sentences, w2v_vectors, indices):
             Y.append(tg_vector[-1])
     return X, Y
 
+
 def generate_translation_vectors(eng_sents, french_sents, w2v_vectors, indices):
     X = []
     Y = []
@@ -82,7 +85,7 @@ def generate_translation_vectors(eng_sents, french_sents, w2v_vectors, indices):
             # get the english (w2v) and french (one hot) word vectors
             eng_word_vector = w2v_vectors[eng_word]
 
-            #french_word_vector = one_hot_encoded_vectors_french[french_word]
+            # french_word_vector = one_hot_encoded_vectors_french[french_word]
             french_word_vector = generate_one_hot(indices, french_word)
 
             # english word vector is input, french word vector is output
@@ -90,6 +93,7 @@ def generate_translation_vectors(eng_sents, french_sents, w2v_vectors, indices):
             Y.append(french_word_vector)
            
     return X, Y
+
 
 def get_vocabulary(ls_text):
     vocabulary = []
@@ -102,7 +106,6 @@ def get_vocabulary(ls_text):
 
 def remove_words(english, french, w2v_model):
     print("Number of English sentences: {}".format(len(english)))
-    
     e_data = []
     f_data = []
     not_found = []
@@ -132,8 +135,6 @@ def remove_words(english, french, w2v_model):
 
 
 def generate_one_hot_encoded_vectors(ls_words):
-    # encoder = OneHotEncoder(ls_words)
-    # one_hot_encodings = encoder.fit_transform(ls_words)
     dv = DictVectorizer()
     dvX = dv.fit_transform( [ {'word': a} for a in ls_words ] )
     # dvX = dvX.toarray()
@@ -162,8 +163,6 @@ def get_w2v_vectors(w2v_model, ls_words):
     return w2v_vectors
 
 
-
-
 def make_vector_trigrams(sentences, w2v_vectors, one_hot_vectors):
     sentence_vector_trigrams = []
     missing_words = []
@@ -186,8 +185,6 @@ def make_vector_trigrams(sentences, w2v_vectors, one_hot_vectors):
 
     #print("The following words were not found in the w2v: ")
     #print(missing_words)
-    # print("{} trigram vectors were created".format(len(trigram_vectors)))
-    # print("Vector for {}: {}".format(trigram1, trigram_vectors[0]))
     return sentence_vector_trigrams
 
 

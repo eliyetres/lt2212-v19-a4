@@ -7,8 +7,9 @@ import pickle
 from verbose import convert_time
 from readfile import readfile
 from split_data import split_data
-from new_traintest import test_new
+from new_traintest import test_translation
 from vectorization import load_gensim_model, remove_words, get_vocabulary, generate_indices, gen_tri_vec_split, get_w2v_vectors, generate_translation_vectors
+
 
 parser = argparse.ArgumentParser(description="Feed forward neural networks.")
 
@@ -63,7 +64,7 @@ print("Loading translation model.")
 with open(args.translationmodel, 'rb') as tmf:        
     translation_model = pickle.load(tmf)[1]
 
-test_new(target_test, source_test, target_vocab, source_vocab, vectors, target_indices, source_indices, trigram_target_model, translation_model, p, args.top_predicted)
+test_translation(target_test, source_test, target_vocab, source_vocab, vectors, target_indices, source_indices, trigram_target_model, translation_model, p, args.top_predicted)
 
 stop = time.time()
 
