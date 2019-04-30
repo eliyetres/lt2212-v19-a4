@@ -2,7 +2,7 @@
 from sklearn.feature_extraction import DictVectorizer
 
 from gensim.models.keyedvectors import KeyedVectors
-from trigrams import create_ngram
+from utils import create_ngram
 import numpy as np
 import warnings
 warnings.filterwarnings(action='ignore', category=UserWarning, module='gensim')
