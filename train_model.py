@@ -16,28 +16,24 @@ def train_language_model(start, trainedmodelfile, p, r, b, target_trigrams, targ
     # If no model is incoming, create one:
     if not os.path.isfile(trainedmodelfile) or os.path.getsize(trainedmodelfile) <=0:
 
-        print("File not found")
         print("Initializing an empty model")
         trigram_target_model = NeuralNetwork(p, r)
         startpoint = 0
 
         init_sample = random.sample(target_trigrams, b)
 
-        # Initiate network weights from sample                                                                                                                                          
+        # Initiate network weights from sample
         X, Y = gen_tri_vec_split(init_sample, vectors, target_indices)
 
-        # Train language model                                                                                                                                                          
+        # Train language model
         trigram_target_model.start(X, Y, layer_size, len(Y[0]))
         
     else:
-        print("File found")
         with open(trainedmodelfile, 'rb') as mf:
             print("Loading model from file {}.".format(mf))
             content = pickle.load(mf)
             startpoint = content[0]
-            trigram_target_model = content[1]
-            
-    print(startpoint)
+            trigram_target_model = content[1]            
         
     # For each batch...
     for i in range(startpoint, len(target_trigrams), b):
@@ -59,7 +55,7 @@ def train_language_model(start, trainedmodelfile, p, r, b, target_trigrams, targ
 def train_translation_model(start, trainedmodelfile, p, r, b, source_indices, source_train, target_train, vectors, layer_size, epochs):
     print("Training translation model.")
 
-    #If no model is incoming, create one:                                                                                                                                                
+    #If no model is incoming, create one:
     if not os.path.isfile(trainedmodelfile) or os.path.getsize(trainedmodelfile) <=0:
 
         print("File not found")
@@ -67,31 +63,28 @@ def train_translation_model(start, trainedmodelfile, p, r, b, source_indices, so
         translation_model = NeuralNetwork(p, r)
         startpoint = 0
 
-        start_i = random.randint(0,len(target_train)-b) # random start position                                                                                                              
+        start_i = random.randint(0,len(target_train)-b) # random start position
         end_i = start_i+b
 
         X_list, Y_list = generate_translation_vectors(target_train[start_i:end_i], source_train[start_i:end_i], vectors, source_indices)
         
         # Train translation model
         translation_model.start(X_list, Y_list, layer_size, len(Y_list[0]))
+
     else:
-        print("File found")
         with open(trainedmodelfile, 'rb') as mf:
-            print("Loading model from file {}.".format(mf))
-    
+            print("Loading model from file {}.".format(mf))    
             content = pickle.load(mf)
             startpoint = content[0]
             translation_model = content[1]
 
-    print(startpoint)
-            
-    # Train translation model
+    #For each batch...
     for i in range(startpoint, len(target_train), b):
         print("Sentences {} - {} out of {}".format(i, i+b, len(target_train)))
         X_list, Y_list = generate_translation_vectors(target_train[i:i+b], source_train[i:i+b], vectors, source_indices)
         translation_model.train(X_list, Y_list, epochs)
 
-        #...write model to file                                                                                                                                                         
+        #...write model to file                                                                                                                                                     
         print("Writing model to {}, having processed {} sentences.".format(trainedmodelfile, i+b))
         with open(trainedmodelfile, 'wb') as tmf:
             pickle.dump([i+b, translation_model], tmf)    
@@ -107,7 +100,7 @@ parser = argparse.ArgumentParser(description="Feed forward neural networks.")
 parser.add_argument("targetfile", type=str, default="UN-english-sample-small.txt", nargs='?', help="File used as target language.")
 parser.add_argument("sourcefile", type=str, default="UN-french-sample-small.txt", nargs='?', help="File used as source language..")
 parser.add_argument("modelfile", type=str, default="GoogleNews-vectors-negative300.bin", nargs='?', help="Pre-trained word2vec 300-dimensional vectors.")
-parser.add_argument("trainedmodelfile", type=str, default="trained_translation_model", nargs='?', help="Trained language model")
+parser.add_argument("trainedmodelfile", type=str, default="trained_model", nargs='?', help="File used as output for the trained model")
 parser.add_argument("-M", "--modeltype", metavar="M", dest="model_type", type=int, default=0, help="Choose whether to train translation (1) or trigram (0) model")
 parser.add_argument("-B", "--batch", metavar="B", dest="batch", type=int,default=100, help="Batch size used for for training the neural network (default 100).")
 parser.add_argument("-E", "--epoch", metavar="E", dest="epoch", type=int,default=20, help="Number or epochs used for training the neural network (default 20).")
@@ -145,21 +138,8 @@ target_train, target_test, source_train, source_test = split_data(target_data, s
 if b >= len(target_train):
     exit("Error: training batch must be lower than training data.")
 
-print("Generating vocabulary for target text.")
-target_vocab = get_vocabulary(target_data)
 
-print("Generating trigrams for target training data.")
-target_trigrams = create_ngram(target_train)
-
-print("Generating word indices.")
-target_indices = generate_indices(target_vocab)
-
-print("Fetching vectors from model.")
-vectors = get_w2v_vectors(pre_trained_model, target_vocab)
-
-print("Feeding training data in batches of size: {}".format(b))
-
-# this means we're training trigram model
+# train trigram model
 if model_type == 0:
     print("Generating vocabulary for target text.")
     target_vocab = get_vocabulary(target_data)
