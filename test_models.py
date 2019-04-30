@@ -4,9 +4,10 @@ import argparse
 import random
 import time
 import pickle
-from verbose import convert_time
-from readfile import readfile
-from split_data import split_data
+# from verbose import convert_time
+# from readfile import readfile
+# from split_data import split_data
+from utils import convert_time, readfile, split_data, create_ngram, split_data_features_labels
 from new_traintest import test_translation
 from vectorization import load_gensim_model, remove_words, get_vocabulary, generate_indices, gen_tri_vec_split, get_w2v_vectors, generate_translation_vectors
 

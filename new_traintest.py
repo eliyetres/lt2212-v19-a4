@@ -3,7 +3,7 @@ from neural_network import NeuralNetwork
 import torch
 import operator
 import numpy as np
-from trigrams import create_ngram
+from utils import create_ngram
 from sklearn.metrics import classification_report
 
 
