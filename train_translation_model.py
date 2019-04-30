@@ -4,11 +4,8 @@ import time
 import random
 import pickle
 import argparse
-# from utils import convert_time
 from neural_network import NeuralNetwork
 from utils import convert_time, readfile, split_data, create_ngram, split_data_features_labels
-# from split_data import split_data
-# from trigrams import create_ngram, split_data_features_labels
 from vectorization import load_gensim_model, remove_words, get_vocabulary, generate_indices, gen_tri_vec_split, get_w2v_vectors, generate_translation_vectors
 from neural_network import NeuralNetwork
 
@@ -83,6 +80,8 @@ if not os.path.isfile(args.trainedmodelfile) or os.path.getsize(args.trainedmode
     end_i = start_i+b
 
     X_list, Y_list = generate_translation_vectors(target_train[start_i:end_i], source_train[start_i:end_i], vectors, source_indices)
+    
+    # Train translation model
     translation_model.start(X_list, Y_list, layer_size, len(Y_list[0]))
 else:
     print("File found")
