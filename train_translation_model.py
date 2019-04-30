@@ -1,15 +1,14 @@
 import os
 import sys
-import argparse
-import random
 import time
+import random
 import pickle
+import argparse
 from verbose import convert_time
 from neural_network import NeuralNetwork
 from readfile import readfile
 from split_data import split_data
 from trigrams import create_ngram, split_data_features_labels
-from new_traintest import test_new
 from vectorization import load_gensim_model, remove_words, get_vocabulary, generate_indices, gen_tri_vec_split, get_w2v_vectors, generate_translation_vectors
 from neural_network import NeuralNetwork
 

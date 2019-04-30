@@ -1,9 +1,9 @@
 import os
 import sys
-import argparse
-import random
 import time
 import pickle
+import random
+import argparse
 from verbose import convert_time
 from neural_network import NeuralNetwork
 from readfile import readfile

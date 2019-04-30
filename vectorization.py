@@ -25,34 +25,6 @@ def generate_indices(vocabulary):
     return indices
 
 
-def generate_trigram_vector(trigram_sentences, w2v_vectors, indices):
-    sentence_vector_trigrams = []
-
-    for sentence in trigram_sentences:
-        trigram_vectors = []
-        for trigram in sentence:
-            tg_vector = []
-            
-            for index, word in enumerate(trigram):
-                if index < 2:
-                    tg_vector.append(w2v_vectors[word])
-                else:                  
-                    tg_vector.append(generate_one_hot(indices, word))
-            trigram_vectors.append(tg_vector)
-        sentence_vector_trigrams.append(trigram_vectors)
-
-    return sentence_vector_trigrams
-
-
-def generate_w2v_vector(model, word):
-    if word == '<start>':
-        vector = np.random.rand(1,300)[0]
-    else:
-        vector = w2v_model.word_vec(word)
-            
-    return vector
-
-
 def gen_tri_vec_split(trigram_sentences, w2v_vectors, indices):
     X = []
     Y = []
@@ -134,16 +106,6 @@ def remove_words(english, french, w2v_model):
     return e_data, f_data
 
 
-def generate_one_hot_encoded_vectors(ls_words):
-    dv = DictVectorizer()
-    dvX = dv.fit_transform( [ {'word': a} for a in ls_words ] )
-    # dvX = dvX.toarray()
-    one_hot_encodings = {}
-    for index in range(len(ls_words)):
-        one_hot_encodings[ls_words[index]] = dvX[index]
-    return one_hot_encodings
-
-
 def load_gensim_model(path_to_model):
     model =  KeyedVectors.load_word2vec_format(path_to_model, binary=True)
     return model
@@ -161,49 +123,3 @@ def get_w2v_vectors(w2v_model, ls_words):
                 vec = np.random.rand(1,300)[0]
                 w2v_vectors[word] = vec
     return w2v_vectors
-
-
-def make_vector_trigrams(sentences, w2v_vectors, one_hot_vectors):
-    sentence_vector_trigrams = []
-    missing_words = []
-
-    for sentence in sentences:
-        trigram_vectors = []
-        for trigram in sentence:
-            tg_vector = []
-            
-            for index, word in enumerate(trigram):
-                if index < 2:
-                    vector = w2v_vectors[word]
-                    tg_vector.append(vector)
-                else:
-                    vector = one_hot_vectors[word]
-                    tg_vector.append(vector)
-
-            trigram_vectors.append(tg_vector)
-        sentence_vector_trigrams.append(trigram_vectors)
-
-    #print("The following words were not found in the w2v: ")
-    #print(missing_words)
-    return sentence_vector_trigrams
-
-
-def make_translation_vectors(eng_sents, french_sents, w2v_vectors, one_hot_encoded_vectors_french):
-    translation_vectors_X = []
-    translation_vectors_Y = []
-    for sent_index in range(len(eng_sents)):
-        # get the english and french sentences
-        eng_sent = eng_sents[sent_index]
-        french_sent = french_sents[sent_index]
-        for w_index in range(len(eng_sent)):
-            # get the english and french word
-            eng_word = eng_sent[w_index]
-            french_word = french_sent[w_index]
-            # get the english (w2v) and french (one hot) word vectors
-            eng_word_vector = w2v_vectors[eng_word]
-            french_word_vector = one_hot_encoded_vectors_french[french_word]
-            # english word vector is input, french word vector is output
-            translation_vectors_X.append(eng_word_vector)
-            translation_vectors_Y.append(french_word_vector)
-
-    return translation_vectors_X, translation_vectors_Y
