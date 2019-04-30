@@ -38,8 +38,8 @@ class NeuralNetwork():
         self.optimizer = torch.optim.Adam([self.weights_1, self.bias_1, self.weights_2, self.bias_2], lr=self.learning_rate)
         
     def train(self, X_batch, Y_batch, n_epochs=20):
+        print("Training batch...")
         for epoch in range(n_epochs):
-            print("Starting epoch {}".format(epoch))               
             
             X_batch, Y_batch = self.make_tensor(X_batch, Y_batch)
             X_batch = X_batch.to(self.device)
@@ -51,9 +51,6 @@ class NeuralNetwork():
             # set the gradients to 0 before backpropagation
             self.optimizer.zero_grad()
 
-            # Computing loss by built-in function - not used
-            #loss = criterion(self.output, torch.max(Y, 1)[1])
-
             # Compute loss by own function - used
             loss = self.cross_entropy_cat(self.output, torch.max(Y_batch, 1)[1])
 
@@ -63,8 +60,8 @@ class NeuralNetwork():
             # update weights
             self.optimizer.step()
             torch.cuda.empty_cache()
-            print('Epoch [{}/{}], Loss: {:.4f}'.format(epoch+1, n_epochs, loss.item()))
-        
+            #print('Epoch [{}/{}], Loss: {:.4f}'.format(epoch+1, n_epochs, loss.item()))
+            
     def cross_entropy_cat(self, x,y, epsil=1e-12):
                                                                                                                                                                             
         ''' X is on the form num_examples x num_classes                                                                                                                                
