@@ -1,6 +1,6 @@
 # Description of team member contribution
 
-## Group
+## Group ρ
 
 ### Azfar Imtiaz
 * Vectorization, one-hot encoding of vocabulary.
@@ -25,3 +25,4 @@
 * Writing cross entropy functionality
 * Added predict function to the model
 * Initializing training script
+* Saving models to files with possibility to resume training if interupted
