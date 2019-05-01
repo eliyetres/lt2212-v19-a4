@@ -14,6 +14,8 @@
 * Added options for GPU mode
 * Added zero grad before back propagation
 * Added log_softmax to help with vanishing gradients
+* Loading data in batches
+* Creating scripts for running training and testing in terminal
 
 ### Sandra Derbring
 
