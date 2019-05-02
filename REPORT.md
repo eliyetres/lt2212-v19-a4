@@ -35,6 +35,15 @@ From our experience we can conclude a few things:
 * The more epochs, the longer it will train on the same set of data and the loss will decrease.
 * A higher batch size means you also might need to increase epochs so it trains and produces a reasonable low loss.
 
+### Layer size
+This table shows the training of the model using different sized layers. Each model has been trained on 16000 sentences using batches of 500 with 100 epochs on the GPU. The smaller 500 layer size took the longest to train but ended up with the lowest loss. 
+
+| Layer size | Time          | Loss  |
+|------------|---------------|-------|
+| 500        | 11 min 7  sec | 14.73 |
+| 600        | 9 min 31 sec  | 19.60 |
+| 800        | 10 min 7 sec  | 22.20 |
+
 #### Training speed
 We ran some speed test when training the language model shown in the table. The results show that the GPU speed is best utilized when loading a larger batch and training the model for a longer amount of time.
 
