@@ -21,6 +21,8 @@ Trainedmodelfile: File used as output for the trained model. (Default: trainedmo
 -L: Layer size for the neural network. (Default: 600)\
 -P: Using CPU or GPU for training the model. Select GPU with e.g. "cuda:0". (Default CPU)\
 -R: Learning rate for the Adam optimizer (Default: 0.01)\
+-S: Size in percentage of test set (Default: 0.2)\
+
 
 ### Testing:
 The test is done by running **test_models.py**.\
@@ -31,3 +33,4 @@ Languagemodel: The trained language model (Default: trained_language_model)\
 Translationmodel: The trained translation model (Default: trained_translation_mode)\
 -T: Select number of top n predicted words.(Default: 50)\
 -P: Using the CPU or GPU for training the model. Select GPU with e.g. "cuda:0". (Default CPU)
+-S: Size in percentage of test set (Default: 0.2)\
