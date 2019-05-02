@@ -115,11 +115,13 @@ parser.add_argument("-E", "--epoch", metavar="E", dest="epoch", type=int,default
 parser.add_argument("-L", "--layer", metavar="L", dest="layer", type=int, default=600, help="Layer size for the neural network (default 600).")
 parser.add_argument("-P", "--processor", metavar="P", dest="processor", type=str, default="cpu", help="Select processing unit (default cpu).")
 parser.add_argument("-R", "--learning_rate", metavar="R", dest="learning_rate", type=float, default=0.01, help="Optimizer learning rate (default 0.01).")
+parser.add_argument("-S", "--test_size", metavar="T", dest="test_size", type=float, default=0.2, help="Size in percentage of test set (default 0.2).")
 
 args = parser.parse_args()
 
 # Variables
-test_size = 0.2 # Test data %, default 20
+#test_size = 0.2 # Test data %, default 20
+test_size = args.test_size
 layer_size = args.layer
 epochs = args.epoch
 b = args.batch
@@ -129,6 +131,15 @@ model_type = args.model_type
 
 start = time.time()
 
+if test_size < 0 or test_size > 1:
+    exit("Error: Test size must be a number between 0 and lower than 1, e.g. 0.2")
+
+if epochs < 0:
+    exit("Error: Number of epochs can't be negative")
+
+if r < 0 or r > 1:
+    exit("Error: Learning rate must be a float between 0 and lower than 1, e.g. 0.01")
+    
 print("Using {}.".format(args.processor))
 
 print("Loading target language from {} and source language from {}.".format(args.targetfile, args.sourcefile))
@@ -165,7 +176,7 @@ if model_type == 0:
     train_language_model(start, args.trainedmodelfile, p, r, b, target_trigrams, target_indices, vectors, layer_size, epochs)
 
 # train translation model
-else:
+elif model_type == 1:
     print("Generating vocabulary for source text.")
     source_vocab = get_vocabulary(source_data)
 
@@ -180,3 +191,7 @@ else:
 
     print("Feeding training data in batches of size: {}".format(b))
     train_translation_model(start, args.trainedmodelfile, p, r, b, source_indices, source_train, target_train, vectors, layer_size, epochs)
+
+# else
+else:
+    exit("Error: Model type can only be 0 (training trigrams) or 1 (training translation)")
