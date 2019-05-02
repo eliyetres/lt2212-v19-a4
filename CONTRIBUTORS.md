@@ -10,6 +10,7 @@
 * Use sparse matrices instead of dense matrices for combating memory issues
 * Clean up the code, create script for utility functions and remove extra scripts
 * Convert the two separate language and translation model scripts into single scripts with parameter to specify model type
+* Contributed to the report
 
 ### Elin Hagman
 
@@ -20,13 +21,17 @@
 * Added log_softmax to help with vanishing gradients
 * Loading data in batches
 * Creating scripts for running training and testing in terminal
+* Contributed to the report
 
 ### Sandra Derbring
 
 * Splitting vocabulary into training and test data sets by percentage.
-* Removing words from data that are not found in the model
-* Building trigrams of vectors
-* Writing cross entropy functionality
-* Added predict function to the model
-* Initializing training and testing scripts
+* Vectorization, removing out-of-vocabulary words
+* Vectorization, building trigrams of vectors
+* Writing cross entropy functionality for calculating loss
+* Building predict function in the neural network
+* Creating testing script
+* Breaking out training and testing initilizition into separate files
 * Saving models to files with possibility to resume training if interrupted
+* Trained and tested models for the report
+* Contributed to the report
