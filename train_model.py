@@ -1,9 +1,11 @@
 import os
+import re
 import sys
 import time
 import pickle
 import random
 import argparse
+from torch.cuda import device_count
 from utils import convert_time, readfile, split_data, create_ngram, split_data_features_labels
 from vectorization import load_gensim_model, remove_words, get_vocabulary, generate_indices, gen_tri_vec_split, get_w2v_vectors, generate_translation_vectors
 from neural_network import NeuralNetwork
@@ -139,7 +141,21 @@ if epochs < 0:
 
 if r < 0 or r > 1:
     exit("Error: Learning rate must be a float between 0 and lower than 1, e.g. 0.01")
-    
+
+processor_valid = False
+if p.lower() == "cpu":
+    processor_valid = True
+else:
+    gpu_rg = r'cuda\:(\d{1,2})'
+    m = re.search(gpu_rg, p, flags=re.I)
+    if m:
+        gpu_num = int(m.group(1))
+        if gpu_num <= device_count() and gpu_num > 0:
+            processor_valid = True
+
+if processor_valid is False:
+    exit("Processor type is invalid - only 'cuda' and 'cpu' are valid device types")
+
 print("Using {}.".format(args.processor))
 
 print("Loading target language from {} and source language from {}.".format(args.targetfile, args.sourcefile))
