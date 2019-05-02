@@ -18,14 +18,19 @@ parser.add_argument("languagemodel", type=str, default="trained_language_model",
 parser.add_argument("translationmodel", type=str, default="trained_translation_model", nargs='?', help="Trained translation model")
 parser.add_argument("-T", "--top", metavar="T", dest="top_predicted", type=int, default=50, help="Top n predicted words (default 50).")
 parser.add_argument("-P", "--processor", metavar="P", dest="processor", type=str, default="cpu", help="Select processing unit (default cpu).")
+parser.add_argument("-S", "--test_size", metavar="T", dest="test_size", type=float, default=0.2, help="Size in percentage of test set (default 0.2).")
 
 args = parser.parse_args()
 
 # Variables
-test_size = 0.2 # Test data %, default 20
+#test_size = 0.2 # Test data %, default 20
+test_size = args.test_size
 p = args.processor
 
 start = time.time()
+
+if test_size < 0 or test_size > 1:
+    exit("Error: Test size must be a number between 0 and lower than 1, e.g. 0.2")
 
 print("Using {}.".format(args.processor))
 
