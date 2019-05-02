@@ -34,4 +34,5 @@
 * Breaking out training and testing initialization into separate files
 * Saving models to files with possibility to resume training if interrupted
 * Trained and tested models for the report
+* Implemented sanity checks for arguments
 * Contributed to the report
