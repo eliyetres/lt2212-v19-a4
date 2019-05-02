@@ -20,7 +20,7 @@ The standard batch size was set to a small value to make sure it didn't run into
 
 When testing the models as a translation system, the trained models are loaded and the data is divided into a training set and a test set. The default size of the test data is, by convention, 20% of the dataset but the user can specify another percentage when running the program. The prediction is done sentence by sentence. The first word in the sentence is always treated separately to be able to make a trigram for predicting the most probable next English words. 50 was used as a default parameter for the next top words but it can be chosen by the user. 
 
-## Bonus A: GPU
+### Bonus A: GPU
 It's possible to train the model on the GPU sing the parameter "cuda:0" (or any other number of available GPU). We use a function that either creates standard tensors for CPU or cuda tensors for GPU. If the GPU is selected, we push the tensors to it using the function to.(device) where device is the selected GPU. 
 
 Using the GPU was very efficent in the beginning when we were training the model without splitting the data into batches, since we were only feeding the data into the model once.
