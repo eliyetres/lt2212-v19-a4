@@ -32,6 +32,20 @@ start = time.time()
 if test_size < 0 or test_size > 1:
     exit("Error: Test size must be a number between 0 and lower than 1, e.g. 0.2")
 
+processor_valid = False
+if p.lower() == "cpu":
+    processor_valid = True
+else:
+    gpu_rg = r'cuda\:(\d{1,2})'
+    m = re.search(gpu_rg, p, flags=re.I)
+    if m:
+        gpu_num = int(m.group(1))
+        if gpu_num <= device_count() and gpu_num > 0:
+            processor_valid = True
+
+if processor_valid is False:
+    exit("Processor type is invalid - only 'cuda' and 'cpu' are valid device types. Only upto cuda:%d are valid" % device_count())
+
 print("Using {}.".format(args.processor))
 
 print("Loading target language from {} and source language from {}.".format(args.targetfile, args.sourcefile))
