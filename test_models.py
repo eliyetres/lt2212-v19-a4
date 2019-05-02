@@ -1,9 +1,11 @@
 import os
+import re
 import sys
 import argparse
 import random
 import time
 import pickle
+from torch.cuda import device_count
 from utils import convert_time, readfile, split_data, create_ngram, split_data_features_labels
 from test_translations import test_translation
 from vectorization import load_gensim_model, remove_words, get_vocabulary, generate_indices, gen_tri_vec_split, get_w2v_vectors, generate_translation_vectors
@@ -44,7 +46,7 @@ else:
             processor_valid = True
 
 if processor_valid is False:
-    exit("Processor type is invalid - only 'cuda' and 'cpu' are valid device types. Only upto cuda:%d are valid" % device_count())
+    exit("Processor type is invalid - only 'cuda' and 'cpu' are valid device types. Only up to cuda:%d are valid" % device_count())
 
 print("Using {}.".format(args.processor))
 
