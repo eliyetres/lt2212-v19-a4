@@ -4,7 +4,6 @@ import time
 import pickle
 import random
 import argparse
-from neural_network import NeuralNetwork
 from utils import convert_time, readfile, split_data, create_ngram, split_data_features_labels
 from vectorization import load_gensim_model, remove_words, get_vocabulary, generate_indices, gen_tri_vec_split, get_w2v_vectors, generate_translation_vectors
 from neural_network import NeuralNetwork
@@ -46,6 +45,11 @@ def train_language_model(start, trainedmodelfile, p, r, b, target_trigrams, targ
         with open(trainedmodelfile, 'wb') as tmf:
             pickle.dump([i+b, trigram_target_model], tmf)
 
+        t = time.time()
+        h, m, s = (convert_time(start, t))
+        print("Time passed: {}:{}:{}\n".format(h, m, s))
+
+            
     stop = time.time()
     hour, minute, second = (convert_time(start, stop))
     print("Trained {} sentences on {} hours, {} minutes and {} seconds".format(len(target_trigrams), hour, minute, second))
@@ -89,6 +93,10 @@ def train_translation_model(start, trainedmodelfile, p, r, b, source_indices, so
         with open(trainedmodelfile, 'wb') as tmf:
             pickle.dump([i+b, translation_model], tmf)    
 
+        t = time.time()
+        h, m, s = (convert_time(start, t))
+        print("Time passed: {}:{}:{}\n".format(h, m, s))
+            
     stop = time.time()
     hour, minute, second = (convert_time(start, stop))
     print("Ran {} sentences on {} hours, {} minutes and {} seconds".format(len(target_train), hour, minute, second))
