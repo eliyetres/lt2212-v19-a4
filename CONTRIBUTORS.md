@@ -24,5 +24,5 @@
 * Building trigrams of vectors
 * Writing cross entropy functionality
 * Added predict function to the model
-* Initializing training script
-* Saving models to files with possibility to resume training if interupted
+* Initializing training and testing scripts
+* Saving models to files with possibility to resume training if interrupted
