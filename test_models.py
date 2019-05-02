@@ -5,7 +5,7 @@ import random
 import time
 import pickle
 from utils import convert_time, readfile, split_data, create_ngram, split_data_features_labels
-from test_translation import test_translation
+from test_translations import test_translation
 from vectorization import load_gensim_model, remove_words, get_vocabulary, generate_indices, gen_tri_vec_split, get_w2v_vectors, generate_translation_vectors
 
 
