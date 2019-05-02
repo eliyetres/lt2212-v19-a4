@@ -42,7 +42,7 @@ We ran some speed test when training the language model shown in the table. The 
 | Sentences | Batch size | Epochs | CPU           | GPU               | Comment                    |                                                                                                                                                     
 |-----------|------------|--------|---------------|-------------------|----------------------------|
 | 16000     | 200        | 50     | 25 min 29 sec | 25 min 17 seconds | No real time difference. In this case, using CPU was 8 sec faster.                                                                                                                |
-| 16000     | 200        | 100    | ? (+20 min)   | 9 min 27 sec      | Training on the GPU finished after 9 min 27 sec, at this point the training done on CPU had not even finished the first batch. After 20 min of waiting we interrupted the script. 
+| 16000     | 2000        | 100    | ? (+20 min)   | 9 min 27 sec      | Training on the GPU finished after 9 min 27 sec, at this point the training done on CPU had not even finished the first batch. After 20 min of waiting we interrupted the script. 
 
 #### Translation metrics
 
