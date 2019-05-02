@@ -31,7 +31,6 @@ Although we have implemented a complete neural network, it is, due to obvious re
 
 From our experience we can conclude a few things:
 * A larger size hidden layer means calculations take longer
-* A larger size hidden layer means calculations take longer
 * More epochs means loss decreases which is good
 * A higher batch size means you also might need to increase epochs so it trains and produces a reasonable low loss
 
