@@ -37,6 +37,7 @@ class NeuralNetwork():
         # initialize the optimizer
         self.optimizer = torch.optim.Adam([self.weights_1, self.bias_1, self.weights_2, self.bias_2], lr=self.learning_rate)
         
+
     def train(self, X_batch, Y_batch, n_epochs=20):
         print("Training batch...")
         for epoch in range(n_epochs):
@@ -51,7 +52,7 @@ class NeuralNetwork():
             # set the gradients to 0 before backpropagation
             self.optimizer.zero_grad()
 
-            # Compute loss by own function - used
+            # Compute loss by own function
             loss = self.cross_entropy_cat(self.output, torch.max(Y_batch, 1)[1])
 
             # compute gradients
@@ -61,24 +62,23 @@ class NeuralNetwork():
             self.optimizer.step()
             torch.cuda.empty_cache()
             #print('Epoch [{}/{}], Loss: {:.4f}'.format(epoch+1, n_epochs, loss.item()))
-            
+
+        print("Loss: {}".format(loss.item()))
+
+
     def cross_entropy_cat(self, x,y, epsil=1e-12):
                                                                                                                                                                             
-        ''' X is on the form num_examples x num_classes                                                                                                                                
-            y is labels (num_examples x 1)                                                                                                                                             
-            Note that y is not one-hot encoded vector.                                                                                                                                 
-            It can be computed as y.argmax(axis=1) from one-hot encoded vectors of labels if required.'''
-        
-        #If Y are one-hot encoded vectors                                                                                                                                          
-        #y = np.argmax(y, axis=1)                                                                                                                                                       
+        #X = number of samples x number of classes, y = labels 
+            
         m = y.shape[0]
-        p = torch.softmax(x+epsil, dim=1)                                                                                                                                            
+        p = torch.softmax(x+epsil, dim=1)                                                                                                                                           
 
-        # Multidimensional array indexing to extract softmax probability of the correct label for each sample.
+        # Extracting softmax probability of the correct label for each sample
         log_likelihood = -torch.log(p[range(m),y]+epsil)    # added epsil to avoid log(0)
         loss = torch.sum(log_likelihood)/m
         return loss
 
+    
     def predict(self, X):
         # One hidden layer                                                                                                                                                          
         d = X.mm(self.weights_1)                                                                                                                                                   
@@ -88,6 +88,7 @@ class NeuralNetwork():
         self.output = torch.softmax(d + self.bias_2, dim=1)  
         predicted = torch.softmax(d + self.bias_2, dim=1)
         return predicted
+
     
     def make_tensor(self, X_list, Y_list):
         if self.device == "cpu":
