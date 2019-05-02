@@ -12,16 +12,31 @@ We started by trained a basic network on the data using PyTorch's nn classes, ju
 When discussing the layer size with Bill he mentioned the size of the hidden nodes should be somewhere between the dimension of the input layer and the dimension of the output (target langauge vocabulary). We decided that around 500 would be a good start. Experimenting further, a layer size of 600 seemed to do better and produce a lower loss than 500 and took less time to train than a layer size of 800 where the loss was about the same. 
 
 ### Training and testing
-To be able to reuse trained models, the training and testing is done in separate scripts. The training script trains either the translation model or the language model using parameters mentioned in the README. This is to ensure that the models can be trained simultaneously. Various minor functions are implemented in separate scripts that are imported for the training and testing.
+To be able to reuse trained models, the training and testing is done in separate scripts. The training script trains either the translation model or the language model using parameters mentioned in the README. This is to ensure that the models can be trained simultaneously. Various minor functions are implemented in separate scripts that are imported for the training and testing. Sanity checks to make sure the arguments are valid have been implemented for each argument in both the training and testing script. 
 
 Initially all the data was loaded into the model at once which resulted in memory errors. We looked into using a data loader but it seemed hard to implement since we already had finished the loading and processing of the files. We ended up splitting the data into batches to feed into the model piece py piece. The batch number equals how many sentences that are loaded and used for training. When the model is created it uses one batch from the data to initiate the weight and then the rest is loaded one batch at a time. Each model is saved to a file after one batch of data has been processed. If the training is interrupted, it is then possible to resume training from the last saved model.
 
 The standard batch size was set to a small value to make sure it didn't run into any memory issues and the epochs were also set to a lower value because of the time it would take to train the model.
 
-When testing the models as a translation system, the trained models are loaded and the data is divided into a training set and a test set. The default size of the test data is 20% of the dataset. The prediction is done sentence by sentence. The first word in the sentence is always treated separately to be able to make a trigram for predicting the most probable next English words. 50 was used as a default parameter for the next top words. 
+When testing the models as a translation system, the trained models are loaded and the data is divided into a training set and a test set. The default size of the test data is, by convention, 20% of the dataset but the user can specify another percentage when running the program. The prediction is done sentence by sentence. The first word in the sentence is always treated separately to be able to make a trigram for predicting the most probable next English words. 50 was used as a default parameter for the next top words but it can be chosen by the user. 
+
+## Bonus A: GPU
+It's possible to train the model on the GPU sing the parameter "cuda:0" (or any other number of available GPU). We use a function that either creates standard tensors for CPU or cuda tensors for GPU. If the GPU is selected, we push the tensors to it using the function to.(device) where device is the selected GPU. 
+
+Using the GPU was very efficent in the beginning when we were training the model without splitting the data into batches, since we were only feeding the data into the model once.
+The speed of the GPU is only utilized when training the model during epochs, so a small batch size and a low number or epochs might not have an effect on performance since it would require time to save the data to the disk and move the data from CPU to GPU.
 
 ### Results
-The script measures accuracy, precision, recall and F1 score with the help of SKLearn Metrics. However, we have not yet mananged to run data large enough to get these scores for the prediction. Below is the largest data set we have been able to train.
+Although we have implemented a complete neural network, it is, due to obvious reasons, both inefficient and unoptimized. This makes it both slow and memory-consuming and caused a lot of errors along the way. Those obstructions, together with limited time frame, made it difficult for us to experiment too much with different parameters. 
+
+From our experience we can conclude a few things:
+* A larger size hidden layer means calculations take longer
+* A larger size hidden layer means calculations take longer
+* More epochs means loss decreases which is good
+* A higher batch size means you also might need to increase epochs so it trains and produces a reasonable low loss
+
+The script measures accuracy, precision, recall and F1 score with the help of SKLearn Metrics. However, we have not yet managed to run data large enough to get these scores for the prediction. Below is the largest data set we have been able to train, due to the aforementioned memory errors and time frames.
+
 
 | Sentences | Trained on | Tested on | Trigram loss | Translation loss |
 |-----------|------------|-----------|--------------|------------------|
