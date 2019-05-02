@@ -24,6 +24,6 @@ When testing the models as a translation system, the trained models are loaded a
 The script measures accuracy, precision, recall and F1 score with the help of SKLearn Metrics. However, we have not yet mananged to run data large enough to get these scores for the prediction. Below is the largest data set we have been able to train.
 
 | Sentences | Trained on | Tested on | Trigram loss | Translation loss |
-|----------------------------------------------------------------------|
+|-----------|------------|-----------|--------------|------------------|
 | 75 000    | 60 000     | 15 000    | 6.3979       | 5.9562           |
 
