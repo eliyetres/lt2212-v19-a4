@@ -154,7 +154,7 @@ else:
             processor_valid = True
 
 if processor_valid is False:
-    exit("Processor type is invalid - only 'cuda' and 'cpu' are valid device types")
+    exit("Processor type is invalid - only 'cuda' and 'cpu' are valid device types. Only upto cuda:%d are valid" % device_count())
 
 print("Using {}.".format(args.processor))
 
