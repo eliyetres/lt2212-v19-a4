@@ -29,10 +29,23 @@ The speed of the GPU is only utilized when training the model during epochs, so 
 ### Results
 Although we have implemented a complete neural network, it is, due to obvious reasons, both inefficient and unoptimized. This makes it both slow and memory-consuming and caused a lot of errors along the way. Those obstructions, together with limited time frame, made it difficult for us to experiment too much with different parameters. 
 
+
 From our experience we can conclude a few things:
-* A larger size hidden layer means calculations take longer
-* More epochs means loss decreases which is good
-* A higher batch size means you also might need to increase epochs so it trains and produces a reasonable low loss
+* The layer size equals the number of nodes in the hidden network, and a larger size means calculations take longer.
+* The more epochs, the longer it will train on the same set of data and the loss will decrease.
+* A higher batch size means you also might need to increase epochs so it trains and produces a reasonable low loss.
+
+#### Training speed
+We ran some speed test when training the language model shown in the table. The results show that the GPU speed is best utilized when loading a larger batch and training the model for a longer amount of time.
+
+
+| Sentences | Batch size | Epochs | CPU           | GPU               | Comment                    |                                                                                                                                                     
+|-----------|------------|--------|---------------|-------------------|----------------------------|
+| 16000     | 200        | 50     | 25 min 29 sec | 25 min 17 seconds | No real time difference. In this case, using CPU was 8 sec faster.                                                                                                                |
+| 16000     | 200        | 100    | ? (+20 min)   | 9 min 27 sec      | Training on the GPU finished after 9 min 27 sec, at this point the training done on CPU had not even finished the first batch. After 20 min of waiting we interrupted the script. |
+|           |            |        |               |                   |                                                                                                                                                                                   |
+
+#### Translation metrics
 
 The script measures accuracy, precision, recall and F1 score with the help of SKLearn Metrics. However, we have not yet managed to run data large enough to get these scores for the prediction. Below is the largest data set we have been able to train, due to the aforementioned memory errors and time frames.
 
