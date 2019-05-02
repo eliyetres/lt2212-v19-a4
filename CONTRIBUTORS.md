@@ -3,9 +3,13 @@
 ## Group ρ
 
 ### Azfar Imtiaz
-* Vectorization, one-hot encoding of vocabulary.
-* Initializing the model with matrix multiplications
-* Building the forward function with biases and weights
+* Vectorization, one-hot encoding of vocabulary
+* Vectorization, load word vectors from Gensim
+* Design a basic working network with PyTorch nn module
+* Build the forward function with biases and weights
+* Use sparse matrices instead of dense matrices for combating memory issues
+* Clean up the code, create script for utility functions and remove extra scripts
+* Convert the two separate language and translation model scripts into single scripts with parameter to specify model type
 
 ### Elin Hagman
 
