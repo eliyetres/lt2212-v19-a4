@@ -31,7 +31,7 @@
 * Writing cross entropy functionality for calculating loss
 * Building predict function in the neural network
 * Creating testing script
-* Breaking out training and testing initilizition into separate files
+* Breaking out training and testing initialization into separate files
 * Saving models to files with possibility to resume training if interrupted
 * Trained and tested models for the report
 * Contributed to the report
