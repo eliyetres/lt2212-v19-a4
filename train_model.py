@@ -105,8 +105,8 @@ def train_translation_model(start, trainedmodelfile, p, r, b, source_indices, so
 
 parser = argparse.ArgumentParser(description="Feed forward neural networks.")
 
-parser.add_argument("targetfile", type=str, default="UN-english-sample-small.txt", nargs='?', help="File used as target language.")
-parser.add_argument("sourcefile", type=str, default="UN-french-sample-small.txt", nargs='?', help="File used as source language..")
+parser.add_argument("targetfile", type=str, default="UN-english.txt", nargs='?', help="File used as target language.")
+parser.add_argument("sourcefile", type=str, default="UN-french.txt", nargs='?', help="File used as source language..")
 parser.add_argument("modelfile", type=str, default="GoogleNews-vectors-negative300.bin", nargs='?', help="Pre-trained word2vec 300-dimensional vectors.")
 parser.add_argument("trainedmodelfile", type=str, default="trained_model", nargs='?', help="File used as output for the trained model")
 parser.add_argument("-M", "--modeltype", metavar="M", dest="model_type", type=int, default=0, help="Choose whether to train translation (1) or trigram (0) model")
